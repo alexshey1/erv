@@ -24,7 +24,6 @@ import { SidebarProvider } from "@/components/layout/sidebar-context"
 import { NavigationProvider } from "@/components/layout/navigation-context"
 import { useSidebarContext } from "@/components/layout/sidebar-context"
 import { useNavigation } from "@/components/layout/navigation-context"
-import GlobalLoading from './loading'
 
 function FooterOld() {
   return (
@@ -84,7 +83,7 @@ export default function MainApp() {
     setResults(calculateResults(setupParams, cycleParams, marketParams))
   }, [setupParams, cycleParams, marketParams])
 
-  if (checkingAuth) return <GlobalLoading />;
+  if (checkingAuth) return <ErvaAppLanding />;
   if (!user) return <ErvaAppLanding />;
 
   // Renderização condicional do app para usuários autenticados

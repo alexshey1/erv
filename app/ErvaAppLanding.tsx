@@ -79,6 +79,18 @@ export default function ErvaAppLanding() {
     setMobileMenuOpen(!mobileMenuOpen)
   }
 
+  const scrollToPlans = () => {
+    const target = document.getElementById('precos')
+    if (!target) return
+    const headerEl = document.querySelector('header') as HTMLElement | null
+    const headerHeight = headerEl?.offsetHeight ?? 0
+    const computeY = () => target.getBoundingClientRect().top + window.pageYOffset - headerHeight - 12
+    window.scrollTo({ top: computeY(), behavior: 'smooth' })
+    setTimeout(() => {
+      window.scrollTo({ top: computeY(), behavior: 'smooth' })
+    }, 600)
+  }
+
   const features = [
     {
       icon: LayoutDashboard,
@@ -199,17 +211,17 @@ export default function ErvaAppLanding() {
   return (
     <div className="min-h-screen bg-white font-inter overflow-x-hidden">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+      <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/20 bg-white/60 supports-[backdrop-filter]:bg-white/40 backdrop-blur-xl backdrop-saturate-150 shadow-sm">
+        <div className="mx-auto w-full sm:container px-0 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 pr-4 sm:pr-6 lg:pr-8">
             {/* Logo */}
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 -ml-4 sm:ml-0 lg:-ml-3">
               <Image
-                src="/ervapp-logo.png"
+                src="/ervapplog2o.png"
                 alt="ErvApp Logo"
-                width={120}
-                height={40}
-                className="h-8 w-auto"
+                width={160}
+                height={48}
+                className="h-10 sm:h-12 w-auto"
                 priority={false}
                 loading="lazy"
                 quality={90}
@@ -234,10 +246,10 @@ export default function ErvaAppLanding() {
               {mobileMenuOpen ? <X className="h-6 w-6 text-gray-600" /> : <Menu className="h-6 w-6 text-gray-600" />}
             </button>
           </div>
-          {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className="md:hidden border-t border-gray-200 py-4 bg-white/95 backdrop-blur-sm">
-              <nav className="flex flex-col space-y-4">
+                      {/* Mobile Menu */}
+            {mobileMenuOpen && (
+              <div className="md:hidden border-t border-white/20 bg-white/70 supports-[backdrop-filter]:bg-white/50 backdrop-blur-xl py-4 rounded-b-xl shadow">
+                <nav className="flex flex-col space-y-4">
                 <Link href="/sobre" className="text-gray-600 hover:text-green-500 transition-colors font-medium" onClick={() => setMobileMenuOpen(false)}>Sobre Nós</Link>
                 <Link href="#funcionalidades" className="text-gray-600 hover:text-green-500 transition-colors font-medium" onClick={() => setMobileMenuOpen(false)}>Funcionalidades</Link>
                 <Link href="#seguranca" className="text-gray-600 hover:text-green-500 transition-colors font-medium" onClick={() => setMobileMenuOpen(false)}>Segurança</Link>
@@ -263,7 +275,7 @@ export default function ErvaAppLanding() {
                 <span className="mr-2">🇧🇷</span>
                 Tecnologia 100% Brasileira • Mais de 10.000 cultivadores
               </Badge>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
                 Menos{" "}
                 <motion.span
                   className="text-green-500 relative inline-block"
@@ -275,7 +287,7 @@ export default function ErvaAppLanding() {
                   <div className="absolute -bottom-2 left-0 w-full h-3 bg-green-200 -z-10 transform -rotate-1"></div>
                 </motion.span>
                 , <motion.span
-                  className="text-green-700 text-6xl sm:text-7xl font-bold inline-block align-baseline relative"
+                  className="text-green-700 text-5xl sm:text-7xl font-bold inline-block align-baseline relative"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 1.6, duration: 0.6, type: 'spring', stiffness: 60 }}
@@ -331,8 +343,9 @@ export default function ErvaAppLanding() {
                   size="lg"
                   variant="outline"
                   className="text-gray-700 border-gray-300 hover:bg-gray-50 text-lg px-8 py-4 bg-transparent font-semibold"
+                  onClick={scrollToPlans}
                 >
-                  Ver Demo ao Vivo
+                  Ver Planos
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </div>
@@ -394,7 +407,7 @@ export default function ErvaAppLanding() {
           <div className="flex flex-wrap justify-center gap-2 mt-2">
             <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-green-200/90 text-green-900 font-bold text-base shadow border border-green-700">100% Brasileiro</span>
             <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-200/90 text-blue-900 font-bold text-base shadow border border-blue-700">Pioneirismo Nacional</span>
-            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-yellow-200/90 text-yellow-900 font-bold text-base shadow border border-yellow-700">IA Verde-Amarela</span>
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-yellow-200/90 text-yellow-900 font-bold text-base shadow border border-yellow-700">Inteligência Artificial</span>
           </div>
           <p className="text-base text-green-800 mt-2 max-w-xl mx-auto">
             Junte-se à revolução verde e inteligente e faça parte da história do cultivo brasileiro!
@@ -646,10 +659,10 @@ export default function ErvaAppLanding() {
                   <span>Histórico de análises para acompanhamento</span>
                 </li>
               </ul>
-              <div className="pt-2">
+              <div className="pt-2 w-full flex justify-center">
                 <Button
                   size="lg"
-                  className="bg-green-500 hover:bg-green-600 text-gray-900 font-semibold px-8 py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  className="bg-green-500 hover:bg-green-600 text-gray-900 font-semibold text-lg px-8 py-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                   onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                 >
                   Analisar Minhas Plantas
@@ -662,7 +675,7 @@ export default function ErvaAppLanding() {
 
       {/* Ervinho Chat Assistant Section */}
       <section className="py-12 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center">
+        <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 items-center">
           {/* Mockup - Aparece primeiro no mobile, segundo no desktop */}
           <div className="order-1 md:order-2 flex justify-center md:justify-end">
             <div className="group relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg transition-transform duration-300 cursor-pointer">
@@ -818,9 +831,43 @@ export default function ErvaAppLanding() {
               Escolha o plano ideal para ter mais produtividade, controle e inteligência no seu cultivo. Comece grátis e evolua quando quiser!
             </p>
           </div>
-          {/* Card/modal comparativo interativo */}
+
+          {/* Cards simples para mobile */}
+          <div className="grid grid-cols-1 gap-4 w-full max-w-5xl mx-auto md:hidden">
+            {plans.map((p) => (
+              <Card
+                key={p.plan}
+                className={`bg-white border ${p.popular ? 'border-green-500 ring-2 ring-green-200' : 'border-green-200'}`}
+              >
+                <CardHeader className="pb-2">
+                  <CardTitle className="flex items-baseline justify-between">
+                    <span className="text-xl font-bold text-gray-900">{p.name}</span>
+                    <span className="text-green-700 font-extrabold">
+                      {p.price === 0 ? 'Grátis' : p.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                    </span>
+                  </CardTitle>
+                  <p className="text-sm text-gray-600">{p.description}</p>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <ul className="text-sm text-gray-700 space-y-1 mb-4">
+                    {p.features.slice(0, 4).map((f) => (
+                      <li key={f} className="flex items-center"><span className="mr-2">✓</span>{f}</li>
+                    ))}
+                  </ul>
+                  <Button
+                    className={`w-full ${p.popular ? 'bg-green-700 hover:bg-green-800 text-white' : 'bg-green-500 hover:bg-green-600 text-gray-900'}`}
+                    onClick={() => router.push(p.plan === 'free' ? '/auth/register' : `/auth/register?plan=${p.plan}`)}
+                  >
+                    {p.plan === 'enterprise' ? 'Falar com Vendas' : p.plan === 'premium' ? 'Obter Premium' : (p.plan === 'basic' ? 'Assinar Agora' : 'Começar')}
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Card/modal comparativo interativo - apenas desktop */}
           <motion.div
-            className="relative w-full max-w-5xl mx-auto rounded-3xl shadow-2xl bg-white border-2 border-green-200 transition-all duration-300 hover:shadow-green-200"
+            className="relative w-full max-w-5xl mx-auto rounded-3xl shadow-2xl bg-white border-2 border-green-200 transition-all duration-300 hover:shadow-green-200 hidden md:block"
             initial={{ opacity: 0, y: -80 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}

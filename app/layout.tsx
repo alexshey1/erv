@@ -3,6 +3,8 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { Suspense } from "react"
 import GlobalLoading from "./loading"
+import ConditionalSuspense from "@/components/layout/conditional-suspense"
+import SimpleFallbackClient from "@/components/layout/simple-fallback"
 import { AuthProvider } from "@/components/providers/auth-provider"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/react"
@@ -114,13 +116,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       <body className={inter.className}>
         <PWASplashWrapper>
-          <Suspense fallback={<SimpleFallback />}>
+          <ConditionalSuspense fallback={<SimpleFallbackClient />}>
           <AuthProvider>
-              <Suspense fallback={<GlobalLoading />}>
+              <ConditionalSuspense fallback={<GlobalLoading />}>
                 {children}
-              </Suspense>
+              </ConditionalSuspense>
           </AuthProvider>
-          </Suspense>
+          </ConditionalSuspense>
         </PWASplashWrapper>
         <SonnerToaster />
         <ServiceWorkerRegistration />
