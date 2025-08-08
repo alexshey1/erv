@@ -37,6 +37,7 @@ import jsPDF from "jspdf"
 import { useRef } from "react"
 import GlobalLoading from '../../loading'
 import { EditCultivationModal } from '@/components/forms/edit-cultivation-modal'
+import { toast } from 'sonner'
 
 // Função para parsear data local yyyy-mm-dd (corrigida para hora 12:00)
 function parseDateLocal(dateStr: string) {
@@ -141,12 +142,12 @@ export default function CultivationDetailPage() {
       if (response.ok) {
         // Atualizar o estado local
         setCultivation(prev => prev ? { ...prev, ...configData } : null);
-        console.log('Configuração salva com sucesso!');
+        toast.success('Configuração salva com sucesso');
       } else {
-        console.error('Erro ao salvar configuração');
+        toast.error('Erro ao salvar configuração');
       }
     } catch (error) {
-      console.error('Erro ao salvar configuração:', error);
+      toast.error('Erro ao salvar configuração');
     }
   }
 
@@ -178,6 +179,7 @@ export default function CultivationDetailPage() {
               hasSevereProblems: cultivationData.cultivation.hasSevereProblems,
               // Dados de setup do banco
               area_m2: cultivationData.cultivation.area_m2,
+              num_plantas: (cultivationData.cultivation as any).num_plantas ?? 6,
               custo_equip_iluminacao: cultivationData.cultivation.custo_equip_iluminacao,
               custo_tenda_estrutura: cultivationData.cultivation.custo_tenda_estrutura,
               custo_ventilacao_exaustao: cultivationData.cultivation.custo_ventilacao_exaustao,
@@ -187,6 +189,7 @@ export default function CultivationDetailPage() {
               dias_vegetativo: cultivationData.cultivation.dias_vegetativo,
               dias_veg: cultivationData.cultivation.dias_veg,
               dias_racao: cultivationData.cultivation.dias_racao,
+              horas_luz_veg: (cultivationData.cultivation as any).horas_luz_veg ?? 18,
               horas_luz_flor: cultivationData.cultivation.horas_luz_flor,
               dias_secagem_cura: cultivationData.cultivation.dias_secagem_cura,
               preco_kwh: cultivationData.cultivation.preco_kwh,
@@ -395,6 +398,9 @@ export default function CultivationDetailPage() {
                     <Share2 className="h-4 w-4 mr-2" />
                     Compartilhar
                   </Button>
+                  <Button variant="outline" size="sm" onClick={openEditModal}>
+                    Editar Cultivo
+                  </Button>
                 </div>
               </div>
             </StaggerItem>
@@ -468,12 +474,11 @@ export default function CultivationDetailPage() {
             {/* Tabs com transição suave */}
             <StaggerItem delay={2}>
               <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-                <TabsList className="grid w-full grid-cols-5">
+                <TabsList className="grid w-full grid-cols-4">
                   <TabsTrigger value="overview">Visão Geral</TabsTrigger>
                   <TabsTrigger value="timeline">Timeline</TabsTrigger>
                   <TabsTrigger value="performance">Performance</TabsTrigger>
                   <TabsTrigger value="configuration">Configuração</TabsTrigger>
-                  <TabsTrigger value="reports">Relatórios</TabsTrigger>
                 </TabsList>
 
                 {/* Visão Geral */}
@@ -682,52 +687,14 @@ export default function CultivationDetailPage() {
                     </div>
                   )}
                 </TabsContent>
-
-                {/* Relatórios */}
-                <TabsContent value="reports" className="space-y-6">
-                  <Card className="shadow-sm">
-                    <CardHeader>
-                      <CardTitle>Bloco de Notas do Cultivo</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <BlocoNotasCultivo cultivationId={cultivation.id} />
-                    </CardContent>
-                  </Card>
-
-                  <Card className="shadow-sm">
-                    <CardHeader>
-                      <CardTitle>Ações de Relatório</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex gap-4">
-                        <Button className="flex items-center gap-2" onClick={() => exportCultivationPDF(cultivation)}>
-                          <Download className="h-4 w-4" />
-                          Exportar PDF Completo
-                        </Button>
-                        <Button variant="outline" className="flex items-center gap-2">
-                          <Share2 className="h-4 w-4" />
-                          Compartilhar Relatório
-                        </Button>
-                        <Button variant="outline" className="flex items-center gap-2">
-                          <Bell className="h-4 w-4" />
-                          Configurar Alertas
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
+                
               </Tabs>
             </StaggerItem>
           </StaggerContainer>
         </div>
       </div>
 
-      {/* Botão para abrir modal de edição */}
-      <div className="flex justify-end mb-4">
-        <Button variant="outline" size="sm" onClick={openEditModal}>
-          Editar Cultivo
-        </Button>
-      </div>
+      {/* Botão de edição movido para o header */}
 
       {/* Modal de edição de cultivo */}
       <EditCultivationModal
@@ -929,19 +896,19 @@ function CultivationCalendarV2({ startDate }: { startDate: string }) {
         <div className="flex flex-col gap-2 mt-4 w-full max-w-xs">
           <label className="flex items-center gap-2">
             <span className="w-20">Floração:</span>
-            <input type="date" className="border rounded p-1 flex-1" value={dates.floracao ? dates.floracao.toISOString().split('T')[0] : ""} onChange={e => handleDateInputChange("floracao", e.target.value)} disabled={loading} />
+            <input type="date" className="border rounded p-1 flex-1 bg-white text-gray-900 placeholder:text-gray-400 dark:bg-white dark:text-gray-900" value={dates.floracao ? dates.floracao.toISOString().split('T')[0] : ""} onChange={e => handleDateInputChange("floracao", e.target.value)} disabled={loading} />
           </label>
           <label className="flex items-center gap-2">
             <span className="w-20">Colheita:</span>
-            <input type="date" className="border rounded p-1 flex-1" value={dates.colheita ? dates.colheita.toISOString().split('T')[0] : ""} onChange={e => handleDateInputChange("colheita", e.target.value)} disabled={loading} />
+            <input type="date" className="border rounded p-1 flex-1 bg-white text-gray-900 placeholder:text-gray-400 dark:bg-white dark:text-gray-900" value={dates.colheita ? dates.colheita.toISOString().split('T')[0] : ""} onChange={e => handleDateInputChange("colheita", e.target.value)} disabled={loading} />
           </label>
           <label className="flex items-center gap-2">
             <span className="w-20">Secagem:</span>
-            <input type="date" className="border rounded p-1 flex-1" value={dates.secagem ? dates.secagem.toISOString().split('T')[0] : ""} onChange={e => handleDateInputChange("secagem", e.target.value)} disabled={loading} />
+            <input type="date" className="border rounded p-1 flex-1 bg-white text-gray-900 placeholder:text-gray-400 dark:bg-white dark:text-gray-900" value={dates.secagem ? dates.secagem.toISOString().split('T')[0] : ""} onChange={e => handleDateInputChange("secagem", e.target.value)} disabled={loading} />
           </label>
           <label className="flex items-center gap-2">
             <span className="w-20">Cura:</span>
-            <input type="date" className="border rounded p-1 flex-1" value={dates.cura ? dates.cura.toISOString().split('T')[0] : ""} onChange={e => handleDateInputChange("cura", e.target.value)} disabled={loading} />
+            <input type="date" className="border rounded p-1 flex-1 bg-white text-gray-900 placeholder:text-gray-400 dark:bg-white dark:text-gray-900" value={dates.cura ? dates.cura.toISOString().split('T')[0] : ""} onChange={e => handleDateInputChange("cura", e.target.value)} disabled={loading} />
           </label>
         </div>
         <div className="flex flex-wrap gap-2 mt-4 items-center justify-center">

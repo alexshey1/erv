@@ -63,10 +63,10 @@ export function SettingsDropdown({ isOpen }: SettingsDropdownProps) {
         <DropdownMenuContent align="start" className="w-56">
           <DropdownMenuLabel>Configurações</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setModal("preferences")}> <Settings className="h-4 w-4 mr-2" /> Preferências </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setModal("security")}> <Shield className="h-4 w-4 mr-2" /> Segurança </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setModal("notifications")}> <Bell className="h-4 w-4 mr-2" /> Notificações </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setModal("appearance")}> <Palette className="h-4 w-4 mr-2" /> Aparência </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => { setIsDropdownOpen(false); setModal("preferences") }}> <Settings className="h-4 w-4 mr-2" /> Preferências </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => { setIsDropdownOpen(false); setModal("security") }}> <Shield className="h-4 w-4 mr-2" /> Segurança </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => { setIsDropdownOpen(false); setModal("notifications") }}> <Bell className="h-4 w-4 mr-2" /> Notificações </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => { setIsDropdownOpen(false); setModal("appearance") }}> <Palette className="h-4 w-4 mr-2" /> Aparência </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem 
             onClick={handleLogout}
@@ -78,7 +78,7 @@ export function SettingsDropdown({ isOpen }: SettingsDropdownProps) {
         </DropdownMenuContent>
       </DropdownMenu>
       {/* Modais para cada configuração */}
-      <Dialog open={modal !== null} onOpenChange={() => setModal(null)}>
+      <Dialog open={modal !== null} onOpenChange={(open) => { if (!open) setModal(null) }}>
         {modal === "profile" ? (
           <DialogContent className="max-w-md">
             <DialogHeader>

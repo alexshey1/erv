@@ -16,9 +16,10 @@ interface Tarefa {
 interface ListaTarefasProps {
   tarefas?: Tarefa[];
   onToggleTarefa?: (index: number) => void;
-  onAddTarefa?: (nome: string, prazo: string, prioridade?: string, dataLimite?: Date) => void;
+  onAddTarefa?: (nome: string, prazo: string, prioridade?: string, dataLimite?: Date, cultivationId?: string) => void;
   onDeleteTarefa?: (index: number) => void;
   onEditTarefa?: (index: number, tarefa: Tarefa) => void;
+  cultivationId?: string;
 }
 
 export default function ListaTarefas({ 
@@ -26,7 +27,8 @@ export default function ListaTarefas({
   onToggleTarefa = () => {}, 
   onAddTarefa = () => {}, 
   onDeleteTarefa = () => {},
-  onEditTarefa = () => {}
+  onEditTarefa = () => {},
+  cultivationId
 }: ListaTarefasProps) {
   const [novaTarefa, setNovaTarefa] = useState('')
   const [novoPrazo, setNovoPrazo] = useState('')
@@ -184,7 +186,7 @@ export default function ListaTarefas({
     e.preventDefault()
     if (novaTarefa.trim()) {
       const dataLimite = novaDataLimite ? new Date(novaDataLimite) : processarPrazo(novoPrazo)
-      onAddTarefa(novaTarefa.trim(), novoPrazo || 'Sem prazo', novaPrioridade, dataLimite || undefined)
+      onAddTarefa(novaTarefa.trim(), novoPrazo || 'Sem prazo', novaPrioridade, dataLimite || undefined, cultivationId)
       setNovaTarefa('')
       setNovoPrazo('')
       setNovaDataLimite('')
@@ -359,7 +361,7 @@ export default function ListaTarefas({
                 value={novaTarefa}
                 onChange={(e) => setNovaTarefa(e.target.value)}
                 placeholder="Nova tarefa"
-                className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white text-gray-900 placeholder:text-gray-400 dark:bg-white dark:text-gray-900"
                 autoFocus
                 aria-label="Nome da tarefa"
               />
@@ -372,12 +374,12 @@ export default function ListaTarefas({
                 Cancelar
               </button>
             </div>
-            <div className="flex gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
               <input
                 type="text"
                 value={novoPrazo}
                 onChange={(e) => setNovoPrazo(e.target.value)}
-                className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white text-gray-900 placeholder:text-gray-400 dark:bg-white dark:text-gray-900"
                 placeholder="Prazo"
                 aria-label="Prazo"
               />
@@ -385,14 +387,14 @@ export default function ListaTarefas({
                 type="datetime-local"
                 value={novaDataLimite}
                 onChange={(e) => setNovaDataLimite(e.target.value)}
-                className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full min-w-0 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white text-gray-900 placeholder:text-gray-400 dark:bg-white dark:text-gray-900"
                 placeholder="Data e hora limite"
                 aria-label="Data e hora limite"
               />
               <select
                 value={novaPrioridade}
                 onChange={(e) => setNovaPrioridade(e.target.value as 'baixa' | 'media' | 'alta')}
-                className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white text-gray-900 dark:bg-white dark:text-gray-900"
                 aria-label="Prioridade"
               >
                 <option value="baixa">Baixa</option>

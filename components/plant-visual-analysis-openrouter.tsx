@@ -55,12 +55,12 @@ export default function PlantVisualAnalysisOpenRouter() {
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!/^(image\/jpeg|image\/png|image\/webp)$/.test(file.type)) {
-      setError("Apenas imagens JPG, PNG ou WEBP são permitidas.");
+    if (!file.type.startsWith('image/')) {
+      setError("Apenas arquivos de imagem são permitidos.");
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      setError("O tamanho máximo da imagem é 5MB.");
+    if (file.size > 15 * 1024 * 1024) {
+      setError("O tamanho máximo da imagem é 15MB.");
       return;
     }
     setError(null);
@@ -349,7 +349,7 @@ export default function PlantVisualAnalysisOpenRouter() {
                     <input
                       ref={fileInputRef}
                       type="file"
-                      accept="image/jpeg,image/png,image/webp"
+                      accept="image/*"
                       onChange={handleImageChange}
                       disabled={loading}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed z-10"
@@ -407,7 +407,7 @@ export default function PlantVisualAnalysisOpenRouter() {
                             </motion.div>
                             <div>
                               <p className="text-xl font-bold text-slate-700 mb-2">Solte a imagem da sua planta aqui</p>
-                              <p className="text-sm text-slate-500">ou clique para navegar • JPG, PNG, WEBP • Máx 5MB</p>
+                              <p className="text-sm text-slate-500">ou clique para navegar • Somente imagens • Máx 15MB</p>
                             </div>
                           </motion.div>
                         )}

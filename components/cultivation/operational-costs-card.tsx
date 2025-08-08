@@ -36,7 +36,7 @@ export function OperationalCostsCard({ cultivation }: OperationalCostsCardProps)
   const diasVeg = cultivation.dias_vegetativo || 60
   const diasFlor = cultivation.dias_racao || 70
   const diasCura = cultivation.dias_secagem_cura || 20
-  const horasLuzVeg = 18 // 18h na vegetativa
+  const horasLuzVeg = (cultivation as any).horas_luz_veg || 18
   const horasLuzFlor = cultivation.horas_luz_flor || 12
 
   // Apenas veg e floração consomem energia (cura não usa luz)

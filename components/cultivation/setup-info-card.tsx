@@ -25,6 +25,8 @@ interface SetupInfoCardProps {
     dias_racao?: number
     dias_secagem_cura?: number
     horas_luz_flor?: number
+    horas_luz_veg?: number
+    num_plantas?: number
   }
 }
 
@@ -97,7 +99,7 @@ export function SetupInfoCard({ cultivation }: SetupInfoCardProps) {
               <div className="font-medium text-green-600">
                 {cultivation.dias_vegetativo || 60}d
               </div>
-              <div className="text-xs text-gray-500">18h luz</div>
+              <div className="text-xs text-gray-500">{cultivation.horas_luz_veg || 18}h luz</div>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 mb-1">

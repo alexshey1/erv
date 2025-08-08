@@ -56,7 +56,7 @@ export function LoginForm() {
           {...register("email", { required: true })} 
           autoComplete="email"
           suppressHydrationWarning
-          className="w-full border rounded px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-green-500" 
+          className="w-full border rounded px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-green-500 bg-white text-gray-900 placeholder:text-gray-400 dark:bg-white dark:text-gray-900" 
         />
         <div className="h-4 mt-0 mb-0">
           {errors.email
@@ -73,7 +73,7 @@ export function LoginForm() {
           {...register("password", { required: true })} 
           autoComplete="current-password"
           suppressHydrationWarning
-          className="w-full border rounded px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-green-500" 
+          className="w-full border rounded px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-green-500 bg-white text-gray-900 placeholder:text-gray-400 dark:bg-white dark:text-gray-900" 
         />
         <div className="h-4 mt-0 mb-0">
           {errors.password
@@ -92,8 +92,8 @@ export function LoginForm() {
       </div>
       <button 
         type="submit" 
-        disabled={isLoading}
-        className="w-full bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white font-semibold py-2 rounded transition flex items-center justify-center gap-2 mt-1"
+        disabled={isLoading || !formState.isValid}
+        className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-2 rounded transition flex items-center justify-center gap-2 mt-1"
       >
         {isLoading ? (
           <>

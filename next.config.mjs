@@ -178,7 +178,7 @@ const nextConfig = {
   },
 
   // Habilitar source maps no ambiente de produção
-  productionBrowserSourceMaps: true,
+  productionBrowserSourceMaps: process.env.NODE_ENV !== 'production',
 }
 
 export default nextConfig

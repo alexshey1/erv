@@ -1,6 +1,46 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from 'openai';
 
+const ALLOWED_IMAGE_HOSTS = new Set([
+  'res.cloudinary.com',
+  'i.ibb.co',
+  'images.unsplash.com',
+]);
+
+const MAX_IMAGE_BYTES = 15 * 1024 * 1024; // 15MB
+const MAX_URL_LENGTH = 2048;
+
+function isValidHttpsUrl(urlString: string): boolean {
+  try {
+    const url = new URL(urlString);
+    if (url.protocol !== 'https:') return false;
+    if (!ALLOWED_IMAGE_HOSTS.has(url.hostname)) return false;
+    if (urlString.length > MAX_URL_LENGTH) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function headCheckImage(urlString: string): Promise<{ ok: boolean; reason?: string }> {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+    const res = await fetch(urlString, { method: 'HEAD', signal: controller.signal });
+    clearTimeout(timeout);
+    if (!res.ok) return { ok: false, reason: `HEAD status ${res.status}` };
+    const contentType = res.headers.get('content-type') || '';
+    if (!contentType.startsWith('image/')) return { ok: false, reason: 'content-type não é imagem' };
+    const contentLength = res.headers.get('content-length');
+    if (contentLength && Number(contentLength) > MAX_IMAGE_BYTES) {
+      return { ok: false, reason: 'imagem maior que 15MB' };
+    }
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, reason: 'HEAD falhou' };
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     console.log("=== Iniciando análise visual ===");
@@ -20,6 +60,17 @@ export async function POST(req: NextRequest) {
     if (!imageUrl) {
       console.error("URL da imagem não enviada");
       return NextResponse.json({ error: "URL da imagem não enviada." }, { status: 400 });
+    }
+
+    // Sanitização básica do URL
+    if (!isValidHttpsUrl(imageUrl)) {
+      return NextResponse.json({ error: 'URL da imagem inválida ou não permitida.' }, { status: 400 });
+    }
+
+    // Checagem leve via HEAD (tipo de conteúdo e tamanho)
+    const headCheck = await headCheckImage(imageUrl);
+    if (!headCheck.ok) {
+      return NextResponse.json({ error: `Imagem inválida: ${headCheck.reason}` }, { status: 400 });
     }
 
     const apiKey = process.env.OPENROUTER_API_KEY;

@@ -5,7 +5,6 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Bell, AlertTriangle, CheckCircle, Info, X, Settings } from "lucide-react"
-import ErvaBotChatSuspense from "@/components/erva-bot-chat"
 
 export default function NotificationsPage() {
   return (
@@ -229,11 +228,6 @@ export default function NotificationsPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
-
-      {/* Chat ErvaBot IA */}
-      <div className="mt-10 flex justify-center">
-        <ErvaBotChatSuspense />
       </div>
     </div>
   )

@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { uploadImage } from '@/lib/cloudinary';
 import { createRateLimitedHandler } from '@/lib/rate-limiter';
 
+const MAX_IMAGE_BYTES = 15 * 1024 * 1024; // 15MB
+const DATA_URL_REGEX = /^data:image\/(jpeg|jpg|png|webp|heic|heif);base64,/i;
+const ALLOWED_FORMATS = ['jpg','jpeg','png','webp','heic','heif'];
+
+function sanitizeName(name?: string) {
+  if (!name) return 'image';
+  return name.replace(/[^a-zA-Z0-9-_]/g, '').slice(0, 80) || 'image';
+}
+
 async function uploadHandler(request: NextRequest, rateLimitHeaders: Record<string, string>, context: { params: Promise<{ id: string }> }) {
   console.log('=== ROTA UPLOAD CHAMADA ===');
   
@@ -15,42 +24,46 @@ async function uploadHandler(request: NextRequest, rateLimitHeaders: Record<stri
       hasFolder: !!body.folder
     });
 
-    const { image, filename, folder } = body;
+    const { image, filename, folder } = body as { image: string; filename?: string; folder?: string };
 
-    if (!image) {
-      console.log('Erro: Imagem não fornecida');
-      return NextResponse.json(
-        { error: 'Imagem não fornecida' },
-        { status: 400 }
-      );
+    if (!image || typeof image !== 'string') {
+      return NextResponse.json({ error: 'Imagem não fornecida' }, { status: 400 });
     }
 
-    console.log('3. Configurações Cloudinary:', {
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY ? '***' : 'não definida',
-      api_secret: process.env.CLOUDINARY_API_SECRET ? '***' : 'não definida'
-    });
+    // Validar data URL e tipo
+    if (!DATA_URL_REGEX.test(image)) {
+      return NextResponse.json({ error: 'Formato de imagem inválido. Use data URL (jpeg, png, webp, heic).' }, { status: 400 });
+    }
 
-    // Verificar se as credenciais estão configuradas
+    // Extrair payload base64 e estimar tamanho
+    const base64Payload = image.replace(DATA_URL_REGEX, '');
+    const approxBytes = Math.ceil((base64Payload.length * 3) / 4); // aproximação do tamanho
+    if (approxBytes > MAX_IMAGE_BYTES) {
+      return NextResponse.json({ error: 'Imagem deve ter no máximo 15MB.' }, { status: 400 });
+    }
+
+    // Credenciais Cloudinary
     if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
       console.log('Erro: Credenciais do Cloudinary não configuradas');
-      return NextResponse.json(
-        { error: 'Credenciais do Cloudinary não configuradas' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Credenciais do Cloudinary não configuradas' }, { status: 500 });
     }
 
-    console.log('4. Chamando uploadImage...');
-    
+    const safeFolder = (folder || 'cultivations').replace(/[^a-zA-Z0-9-_\/]/g, '');
+    const safeName = sanitizeName(filename);
+
     try {
-      // Upload para Cloudinary
-      const result = await uploadImage(image, folder || 'cultivations', {
-        public_id: `${folder || 'cultivations'}/${Date.now()}_${filename?.replace(/\.[^/.]+$/, '') || 'image'}`,
+      // Upload para Cloudinary (endurecido)
+      const result = await uploadImage(image, safeFolder, {
+        public_id: `${safeFolder}/${Date.now()}_${safeName}`,
         transformation: [
-          { width: 800, height: 600, crop: 'limit' },
+          { width: 1600, height: 1600, crop: 'limit' },
           { quality: 'auto' }
-        ]
-      });
+        ],
+        resource_type: 'image',
+        allowed_formats: ALLOWED_FORMATS,
+        use_filename: false,
+        unique_filename: true,
+      } as any);
 
       console.log('5. Upload realizado com sucesso:', result.public_id);
 
@@ -58,7 +71,7 @@ async function uploadHandler(request: NextRequest, rateLimitHeaders: Record<stri
         success: true,
         publicId: result.public_id,
         secureUrl: result.secure_url,
-        filename: filename || 'image',
+        filename: safeName,
         fileSize: result.bytes,
         mimeType: `image/${result.format}`,
         width: result.width,

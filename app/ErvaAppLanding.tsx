@@ -140,7 +140,7 @@ export default function ErvaAppLanding() {
     {
       name: "Básico",
       plan: "basic",
-      price: 29,
+      price: 14.9,
       description: "Para quem quer mais controle.",
       features: [
         "Tudo do Grátis",
@@ -156,7 +156,7 @@ export default function ErvaAppLanding() {
     {
       name: "Premium",
       plan: "premium",
-      price: 69,
+      price: 34.9,
       description: "Recursos avançados e IA.",
       features: [
         "Tudo do Básico",
@@ -171,7 +171,7 @@ export default function ErvaAppLanding() {
     {
       name: "Enterprise",
       plan: "enterprise",
-      price: 149,
+      price: 119.9,
       description: "Para grandes operações.",
       features: [
         "Tudo do Premium",
@@ -838,9 +838,9 @@ export default function ErvaAppLanding() {
                 <tr className="bg-white">
                   <td className="py-2 px-2 border-b border-green-100 font-bold text-center text-gray-700">Preço</td>
                   <td className="py-2 px-2 border-b border-green-100 text-center font-bold text-green-600">Grátis</td>
-                  <td className="py-2 px-2 border-b border-green-100 text-center font-bold text-green-700">R$ 29,90</td>
-                  <td className="py-2 px-2 border-b border-green-100 text-center font-bold text-green-800 bg-green-50">R$ 69,90</td>
-                  <td className="py-2 px-2 border-b border-green-100 text-center font-bold text-yellow-700">R$ 149,90</td>
+                  <td className="py-2 px-2 border-b border-green-100 text-center font-bold text-green-700">R$ 14,90</td>
+                  <td className="py-2 px-2 border-b border-green-100 text-center font-bold text-green-800 bg-green-50">R$ 34,90</td>
+                  <td className="py-2 px-2 border-b border-green-100 text-center font-bold text-yellow-700">R$ 119,90</td>
                 </tr>
                 <tr className="bg-white">
                   <td className="py-2 px-2 border-b border-green-100 font-bold text-center text-gray-700">Selecionar</td>

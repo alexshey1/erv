@@ -67,10 +67,12 @@ model Cultivation {
   custo_ventilacao_exaustao Float              @default(800)
   custo_outros_equipamentos Float              @default(500)
   potencia_watts            Int                @default(480)
+  num_plantas               Int                @default(6)
   producao_por_planta_g     Float              @default(80)
   dias_vegetativo           Int                @default(60)
   dias_veg                  Int                @default(18)
   dias_racao                Int                @default(70)
+  horas_luz_veg             Int                @default(18)
   horas_luz_flor            Int                @default(12)
   dias_secagem_cura         Int                @default(20)
   preco_kwh                 Float              @default(0.95)
@@ -79,13 +81,12 @@ model Cultivation {
   custo_nutrientes          Float              @default(350)
   custos_operacionais_misc  Float              @default(10)
   preco_venda_por_grama     Float              @default(45)
-  // Novos campos para ciclo adaptativo
-  plant_type                String?            // 'photoperiod', 'autoflower', 'custom'
-  cycle_preset_id           String?            // ID do preset usado, se aplicável
-  custom_cycle_params       String?            // JSON string com configurações customizadas
   createdAt                 DateTime           @default(now())
   updatedAt                 DateTime           @updatedAt
   userId                    String
+  custom_cycle_params       String?
+  cycle_preset_id           String?
+  plant_type                String?
   events                    CultivationEvent[]
   images                    CultivationImage[]
   user                      User               @relation(fields: [userId], references: [id], onDelete: Cascade)

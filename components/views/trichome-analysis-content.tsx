@@ -367,7 +367,7 @@ export default function TrichomeAnalysisContent() {
               <CardContent className="space-y-4">
                 <div className="space-y-3">
                   <div>
-                    <h4 className="font-semibold mb-1">Modelo Moonshot Kimi VL</h4>
+                    <h4 className="font-semibold mb-1">Modelo AI VISION</h4>
                     <p className="text-sm text-gray-600">
                       IA especializada em análise visual que identifica e classifica tricomas automaticamente
                     </p>

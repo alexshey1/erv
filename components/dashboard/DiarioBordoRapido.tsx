@@ -276,7 +276,7 @@ export default function DiarioBordoRapido({
                 placeholder="Buscar eventos..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-400 dark:bg-white dark:text-gray-900"
               />
               {searchTerm && (
                 <button
@@ -293,7 +293,7 @@ export default function DiarioBordoRapido({
               <select
                 value={selectedCategoria}
                 onChange={(e) => setSelectedCategoria(e.target.value)}
-                className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 dark:bg-white dark:text-gray-900"
               >
                 {categoriasUnicas.map(categoria => (
                   <option key={categoria} value={categoria}>
@@ -305,7 +305,7 @@ export default function DiarioBordoRapido({
               <select
                 value={selectedCultivo}
                 onChange={(e) => setSelectedCultivo(e.target.value)}
-                className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900 dark:bg-white dark:text-gray-900"
               >
                 {cultivosUnicos.map(cultivoId => {
                   if (cultivoId === 'todos') return <option key={cultivoId} value={cultivoId}>Todos cultivos</option>

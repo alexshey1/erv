@@ -28,7 +28,7 @@ const LANDING_PLANS_DATA = [
   {
     name: "Básico",
     plan: "basic" as const,
-    price: 29,
+    price: 14.9,
     description: "Para quem quer mais controle.",
     features: [
       "Tudo do Grátis",
@@ -49,7 +49,7 @@ const LANDING_PLANS_DATA = [
   {
     name: "Premium",
     plan: "premium" as const,
-    price: 69,
+    price: 34.9,
     description: "Recursos avançados e IA.",
     features: [
       "Tudo do Básico",
@@ -69,7 +69,7 @@ const LANDING_PLANS_DATA = [
   {
     name: "Enterprise",
     plan: "enterprise" as const,
-    price: 149,
+    price: 119.9,
     description: "Para grandes operações.",
     features: [
       "Tudo do Premium",
@@ -153,7 +153,7 @@ export default function PlansPage() {
                 {/* Preço */}
                 <div className="text-center mb-2">
                   <span className="text-4xl font-extrabold text-green-900 dark:text-green-200">
-                    R$ {plan.price.toFixed(0)}
+                    R$ {plan.price.toFixed(2).replace('.', ',')}
                   </span>
                   <span className="text-green-700 dark:text-green-300 text-base ml-1">/mês</span>
                 </div>

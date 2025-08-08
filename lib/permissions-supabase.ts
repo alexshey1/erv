@@ -120,11 +120,11 @@ export function checkCultivationLimit(user: any, currentCount: number): boolean 
   return currentCount < permissions.maxCultivations
 }
 
-export const PLAN_PRICES = {
+export const PLAN_PRICES: Record<SubscriptionPlan, { price: number; currency: string }> = {
   free: { price: 0, currency: 'BRL' },
-  basic: { price: 29, currency: 'BRL' },
-  premium: { price: 69, currency: 'BRL' },
-  enterprise: { price: 149, currency: 'BRL' },
+  basic: { price: 14.9, currency: 'BRL' },
+  premium: { price: 34.9, currency: 'BRL' },
+  enterprise: { price: 119.9, currency: 'BRL' },
 }
 
 export const PLAN_FEATURES = {

@@ -287,7 +287,7 @@ export default function PesquisaStrains({ principais, outras }: PesquisaStrainsP
               placeholder="Pesquisar por nome... (+2300 strains)"
               value={termo}
               onChange={e => setTermo(e.target.value)}
-              className="w-full max-w-md px-5 py-3 border border-green-300 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-green-400 text-gray-800 text-base"
+              className="w-full max-w-md px-5 py-3 border border-green-300 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-green-400 text-gray-900 placeholder-gray-500 bg-white text-base"
             />
           </div>
           {/* Direita: Filtro */}
@@ -295,7 +295,7 @@ export default function PesquisaStrains({ principais, outras }: PesquisaStrainsP
             <select
               value={sabor}
               onChange={e => setSabor(e.target.value)}
-              className="w-80 px-5 py-3 border border-green-300 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-green-400 text-gray-800 text-base"
+              className="w-80 px-5 py-3 border border-green-300 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-green-400 text-gray-900 bg-white text-base"
             >
               <option value="">Filtrar por sabor/aroma</option>
               {saboresUnicos.map((s, idx) => (
@@ -323,12 +323,12 @@ export default function PesquisaStrains({ principais, outras }: PesquisaStrainsP
             placeholder="Pesquisar por nome... (+2300 strains)"
             value={termo}
             onChange={e => setTermo(e.target.value)}
-            className="w-full px-5 py-3 border border-green-300 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-green-400 text-gray-800 text-base"
+            className="w-full px-5 py-3 border border-green-300 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-green-400 text-gray-900 placeholder-gray-500 bg-white text-base"
           />
           <select
             value={sabor}
             onChange={e => setSabor(e.target.value)}
-            className="w-full px-5 py-3 border border-green-300 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-green-400 text-gray-800 text-base"
+            className="w-full px-5 py-3 border border-green-300 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-green-400 text-gray-900 bg-white text-base"
           >
             <option value="">Filtrar por sabor/aroma</option>
             {saboresUnicos.map((s, idx) => (

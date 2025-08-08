@@ -328,71 +328,50 @@ export function DashboardContent({ results = {}, cycleParams, user }: DashboardC
   const eficienciaHistorico = [0.98, 0.99, 1.01, 1.00]
 
   // Estado funcional para tarefas com prioridades e datas
-  const [tarefas, setTarefas] = useState<Tarefa[]>([
-    { 
-      nome: 'Regar a Planta 01', 
-      prazo: 'em 4 horas', 
-      concluida: false, 
-      prioridade: 'alta',
-      dataCriacao: new Date(),
-      dataLimite: new Date(Date.now() + 4 * 60 * 60 * 1000) // 4 horas
-    },
-    { 
-      nome: 'Fertilizar Planta 02', 
-      prazo: 'Amanhã', 
-      concluida: false, 
-      prioridade: 'media',
-      dataCriacao: new Date(),
-      dataLimite: new Date(Date.now() + 24 * 60 * 60 * 1000) // amanhã
-    },
-    { 
-      nome: 'Observar Planta 01', 
-      prazo: 'em 2 dias', 
-      concluida: false, 
-      prioridade: 'baixa',
-      dataCriacao: new Date(),
-      dataLimite: new Date(Date.now() + 48 * 60 * 60 * 1000) // 2 dias
-    },
-    { 
-      nome: 'Verificar pH da solução', 
-      prazo: 'hoje', 
-      concluida: false, 
-      prioridade: 'alta',
-      dataCriacao: new Date(),
-      dataLimite: new Date(Date.now() + 2 * 60 * 60 * 1000) // 2 horas
-    },
-  ])
+  const [tarefas, setTarefas] = useState<Tarefa[]>([])
+
+  // Carregar tarefas reais
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch('/api/tasks', { credentials: 'include', cache: 'no-cache' })
+        const json = await res.json()
+        if (json.success) setTarefas(json.tarefas)
+      } catch (e) {
+        console.warn('Falha ao carregar tarefas', e)
+      }
+    })()
+  }, [])
   
   // Handlers de tarefas atualizados
   const toggleTarefa = (index: number) => {
-    setTarefas((tarefas: Tarefa[]) =>
-      tarefas.map((t: Tarefa, i: number) =>
-        i === index ? { ...t, concluida: !t.concluida } : t
-      )
-    )
+    const tarefa = tarefas[index]
+    if (!tarefa || !(tarefa as any).id) return
+    const id = (tarefa as any).id as string
+    setTarefas(prev => prev.map((t, i) => i === index ? { ...t, concluida: !t.concluida } : t))
+    fetch('/api/tasks', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, concluida: !tarefa.concluida }) })
   }
   
   const addTarefa = (nome: string, prazo: string, prioridade?: string, dataLimite?: Date) => {
-    setTarefas((tarefas: Tarefa[]) => [...tarefas, { 
-      nome, 
-      prazo, 
-      concluida: false, 
-      prioridade: prioridade as 'baixa' | 'media' | 'alta' || 'media',
-      dataCriacao: new Date(),
-      dataLimite: dataLimite
-    }])
+    setTarefas(prev => [...prev, { nome, prazo, concluida: false, prioridade: (prioridade as any) || 'media', dataCriacao: new Date(), dataLimite }])
+    fetch('/api/tasks', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: nome, prioridade: (prioridade as any) || 'media', dataLimite: dataLimite ? dataLimite.toISOString() : undefined, cultivationId: cultivations[0]?.id }) })
+       
   }
-  
+   
   const deleteTarefa = (index: number) => {
-    setTarefas((tarefas: Tarefa[]) => tarefas.filter((_, i: number) => i !== index))
+    const tarefa = tarefas[index]
+    if ((tarefa as any)?.id) {
+      fetch(`/api/tasks?id=${(tarefa as any).id}`, { method: 'DELETE' })
+    }
+    setTarefas(prev => prev.filter((_, i) => i !== index))
   }
-  
+   
   const editTarefa = (index: number, tarefa: Tarefa) => {
-    setTarefas((tarefas: Tarefa[]) =>
-      tarefas.map((t: Tarefa, i: number) =>
-        i === index ? tarefa : t
-      )
-    )
+    const id = (tarefas[index] as any)?.id
+    setTarefas(prev => prev.map((t, i) => i === index ? tarefa : t))
+    if (id) {
+      fetch('/api/tasks', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, name: tarefa.nome, prioridade: tarefa.prioridade, dataLimite: tarefa.dataLimite?.toISOString() }) })
+    }
   }
 
   const statusTemp = getParametroStatus(ultimaTemp, 24, 30, 5)
@@ -607,6 +586,7 @@ export function DashboardContent({ results = {}, cycleParams, user }: DashboardC
             onAddTarefa={addTarefa} 
             onDeleteTarefa={deleteTarefa}
             onEditTarefa={editTarefa}
+            cultivationId={cultivations[0]?.id}
           />
         </div>
 

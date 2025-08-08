@@ -8,6 +8,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/react"
 import ServiceWorkerRegistration from "@/components/service-worker-registration"
 import PWASplashWrapper from "@/components/pwa-splash-wrapper"
+import SonnerToaster from "@/components/providers/sonner-toaster"
 
 
 const inter = Inter({ subsets: ["latin"] })
@@ -121,6 +122,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </AuthProvider>
           </Suspense>
         </PWASplashWrapper>
+        <SonnerToaster />
         <ServiceWorkerRegistration />
         <SpeedInsights />
         <Analytics />

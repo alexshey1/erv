@@ -35,11 +35,13 @@ interface SetupConfigurationProps {
     dias_racao?: number
     dias_secagem_cura?: number
     horas_luz_flor?: number
+    horas_luz_veg?: number
     preco_kwh?: number
     custo_sementes_clones?: number
     custo_substrato?: number
     custo_nutrientes?: number
     custos_operacionais_misc?: number
+    num_plantas?: number
   }
   onSave?: (data: any) => void
 }
@@ -49,6 +51,7 @@ export function SetupConfiguration({ cultivation, onSave }: SetupConfigurationPr
     // Setup
     area_m2: cultivation.area_m2 || 2.25,
     potencia_watts: cultivation.potencia_watts || 480,
+    num_plantas: cultivation.num_plantas || 6,
     
     // Custos de Equipamentos
     custo_equip_iluminacao: cultivation.custo_equip_iluminacao || 200,
@@ -61,6 +64,7 @@ export function SetupConfiguration({ cultivation, onSave }: SetupConfigurationPr
     dias_racao: cultivation.dias_racao || 70,
     dias_secagem_cura: cultivation.dias_secagem_cura || 20,
     horas_luz_flor: cultivation.horas_luz_flor || 12,
+    horas_luz_veg: (cultivation as any).horas_luz_veg || 18,
     
     // Custos Operacionais
     preco_kwh: cultivation.preco_kwh || 0.95,
@@ -97,12 +101,14 @@ export function SetupConfiguration({ cultivation, onSave }: SetupConfigurationPr
       dias_vegetativo,
       dias_racao,
       horas_luz_flor,
+      horas_luz_veg,
       preco_kwh,
       custo_sementes_clones,
       custo_substrato,
       custo_nutrientes,
       custos_operacionais_misc,
       producao_por_planta_g,
+      num_plantas,
     } = config
 
     // Cálculos de setup
@@ -110,8 +116,7 @@ export function SetupConfiguration({ cultivation, onSave }: SetupConfigurationPr
     const eficienciaWm2 = potencia_watts / area_m2
 
     // Cálculos de energia
-    const horasLuzVeg = 18 // 18h na vegetativa
-    const consumoKwhVeg = (potencia_watts / 1000) * horasLuzVeg * dias_vegetativo
+    const consumoKwhVeg = (potencia_watts / 1000) * (horas_luz_veg || 18) * dias_vegetativo
     const consumoKwhFlor = (potencia_watts / 1000) * horas_luz_flor * dias_racao
     const consumoTotal = consumoKwhVeg + consumoKwhFlor // Apenas veg e floração consomem energia
     const custoEnergia = consumoTotal * preco_kwh
@@ -120,13 +125,12 @@ export function SetupConfiguration({ cultivation, onSave }: SetupConfigurationPr
     const totalOperacional = custoEnergia + custo_sementes_clones + custo_substrato + custo_nutrientes + custos_operacionais_misc
 
     // Cálculos de eficiência
-    const numPlantas = 6 // Assumindo 6 plantas
-    const producaoTotal = producao_por_planta_g * numPlantas
-    const eficienciaGporW = producaoTotal / potencia_watts
-    const eficienciaGporM2 = producaoTotal / area_m2
+    const producaoTotal = producao_por_planta_g * (num_plantas || 0)
+    const eficienciaGporW = potencia_watts ? producaoTotal / potencia_watts : 0
+    const eficienciaGporM2 = area_m2 ? producaoTotal / area_m2 : 0
     const duracaoTotal = dias_vegetativo + dias_racao + (cultivation.dias_secagem_cura || 20)
     const diasComLuz = dias_vegetativo + dias_racao // Apenas veg e floração usam luz
-    const eficienciaTemporal = producaoTotal / diasComLuz // g/dia com luz
+    const eficienciaTemporal = diasComLuz ? producaoTotal / diasComLuz : 0 // g/dia com luz
 
     setCalculations({
       totalSetupCost,
@@ -216,6 +220,16 @@ export function SetupConfiguration({ cultivation, onSave }: SetupConfigurationPr
                     type="number"
                     value={config.potencia_watts}
                     onChange={(e) => handleInputChange("potencia_watts", e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="num_plantas">Número de Plantas</Label>
+                  <Input
+                    id="num_plantas"
+                    type="number"
+                    min={1}
+                    value={config.num_plantas}
+                    onChange={(e) => handleInputChange("num_plantas", e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
@@ -329,18 +343,7 @@ export function SetupConfiguration({ cultivation, onSave }: SetupConfigurationPr
                       onChange={(e) => handleInputChange("dias_secagem_cura", e.target.value)}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="horas_luz_flor" className="flex items-center gap-2">
-                      <Zap className="h-4 w-4 text-yellow-500" />
-                      Horas de Luz (Floração)
-                    </Label>
-                    <Input
-                      id="horas_luz_flor"
-                      type="number"
-                      value={config.horas_luz_flor}
-                      onChange={(e) => handleInputChange("horas_luz_flor", e.target.value)}
-                    />
-                  </div>
+                  {/* Campo de horas de luz movido para a aba de Custos */}
                 </div>
               </div>
             </CardContent>
@@ -358,6 +361,24 @@ export function SetupConfiguration({ cultivation, onSave }: SetupConfigurationPr
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="horas_luz_veg">Horas de Luz (Vegetativo)</Label>
+                  <Input
+                    id="horas_luz_veg"
+                    type="number"
+                    value={config.horas_luz_veg}
+                    onChange={(e) => handleInputChange("horas_luz_veg", e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="horas_luz_flor">Horas de Luz (Floração)</Label>
+                  <Input
+                    id="horas_luz_flor"
+                    type="number"
+                    value={config.horas_luz_flor}
+                    onChange={(e) => handleInputChange("horas_luz_flor", e.target.value)}
+                  />
+                </div>
                 <div className="space-y-2">
                   <Label htmlFor="preco_kwh">Preço kWh (R$)</Label>
                   <Input

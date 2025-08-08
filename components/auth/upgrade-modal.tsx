@@ -25,7 +25,7 @@ const PLANS = [
   {
     name: "Básico",
     plan: "basic",
-    price: 29,
+    price: 14.9,
     description: "Mais recursos",
     features: [
       "Tudo do Grátis",
@@ -39,7 +39,7 @@ const PLANS = [
   {
     name: "Premium",
     plan: "premium",
-    price: 69,
+    price: 34.9,
     description: "Com IA integrada",
     features: [
       "Tudo do Básico",
@@ -55,7 +55,7 @@ const PLANS = [
   {
     name: "Enterprise",
     plan: "enterprise",
-    price: 149,
+    price: 119.9,
     description: "Para empresas",
     features: [
       "Tudo do Premium",

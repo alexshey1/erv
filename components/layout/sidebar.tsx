@@ -173,38 +173,7 @@ export default function Sidebar() {
       )}
       {/* Botão de Configurações moderno */}
       <div className="mb-6 mt-auto border-t border-emerald-200/40 pt-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              className="flex items-center gap-3 px-3 py-3 rounded-xl w-full text-left transition-all duration-200 hover:bg-white/40 hover:backdrop-blur-md hover:shadow-md hover:border hover:border-emerald-200/40 text-gray-700 hover:text-gray-800 group"
-              type="button"
-            >
-              <Gear className="w-5 h-5 text-emerald-600 group-hover:text-emerald-700 transition-colors duration-200" />
-              <span className="text-sm font-medium">Configurações</span>
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-56 ml-2 rounded-xl shadow-xl border border-emerald-200/40 p-2 bg-white/80 backdrop-blur-xl">
-            <DropdownMenuItem className="flex items-center gap-3 rounded-lg hover:bg-emerald-50/80 hover:backdrop-blur-sm transition-all duration-200 px-3 py-2">
-              <BellRinging className="h-4 w-4 text-emerald-600" />
-              <span className="text-sm">Notificações</span>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator className="my-1 bg-emerald-200/40" />
-            <DropdownMenuItem className="flex items-center gap-3 rounded-lg hover:bg-emerald-50/80 hover:backdrop-blur-sm transition-all duration-200 px-3 py-2">
-              <SlidersHorizontal className="h-4 w-4 text-emerald-600" />
-              <span className="text-sm">Preferências</span>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator className="my-1 bg-emerald-200/40" />
-            <DropdownMenuItem className="flex items-center gap-3 rounded-lg hover:bg-emerald-50/80 hover:backdrop-blur-sm transition-all duration-200 px-3 py-2">
-              <ShieldCheck className="h-4 w-4 text-emerald-600" />
-              <span className="text-sm">Privacidade</span>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator className="my-1 bg-emerald-200/40" />
-            <DropdownMenuItem className="flex items-center gap-3 rounded-lg hover:bg-emerald-50/80 hover:backdrop-blur-sm transition-all duration-200 px-3 py-2">
-              <Question className="h-4 w-4 text-emerald-600" />
-              <span className="text-sm">Ajuda</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <SettingsDropdown isOpen={true} />
       </div>
     </aside>
   );

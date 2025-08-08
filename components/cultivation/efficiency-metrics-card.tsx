@@ -28,7 +28,7 @@ export function EfficiencyMetricsCard({ cultivation }: EfficiencyMetricsCardProp
   const area = cultivation.area_m2 || 2.25
   const potencia = cultivation.potencia_watts || 480
   const producaoPorPlanta = cultivation.producao_por_planta_g || 80
-  const numPlantas = 6 // Assumindo 6 plantas
+  const numPlantas = (cultivation as any).num_plantas || 6
 
   // Cálculos de eficiência
   const eficienciaWm2 = potencia / area

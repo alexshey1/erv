@@ -1,51 +1,53 @@
-'use client'
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { DashboardContent } from '@/components/dashboard/dashboard-content';
-import GlobalLoading from '../loading'
+import { headers } from "next/headers"
+import { createClient } from "@/lib/supabase/server"
+import { prisma } from "@/lib/prisma"
+import OnboardingGuard from "@/components/layout/onboarding-guard"
+import { DashboardContent } from "@/components/dashboard/dashboard-content"
 
-export default function DashboardPage() {
-  const router = useRouter();
-  const [user, setUser] = useState<any>(null);
-  const [checkingAuth, setCheckingAuth] = useState(true);
-  const [checkingOnboarding, setCheckingOnboarding] = useState(true);
-  const [cycleParams, setCycleParams] = useState<any>(null);
-  const [results, setResults] = useState<any>(null);
+export default async function DashboardPage() {
+  const host = (await headers()).get("host")
 
-  useEffect(() => {
-    // Verificar autenticação
-    fetch('/api/auth/supabase/me')
-      .then(res => res.json())
-      .then(data => {
-        setUser(data.user || null);
-        setCheckingAuth(false);
-      })
-      .catch(() => setCheckingAuth(false));
+  const supabase = await createClient()
+  const { data: { user: authUser } } = await supabase.auth.getUser()
 
-    // Verificar se o usuário já passou pelo onboarding
-    const onboardingCompleted = localStorage.getItem('ervapp_onboarding_completed');
-    
-    if (!onboardingCompleted) {
-      // Se não passou pelo onboarding, redirecionar
-      router.push('/onboarding');
-      return;
-    }
-    
-    setCheckingOnboarding(false);
+  if (!authUser) {
+    return (
+      <div className="p-8 text-center text-lg">Faça login para acessar o dashboard.</div>
+    )
+  }
 
-    // Carregar dados do cultivo
-    fetch('/api/cultivation')
-      .then(res => res.json())
-      .then(data => {
-        if (data.cultivations && data.cultivations.length > 0) {
-          setCycleParams(data.cultivations[0]);
-          setResults(data.cultivations);
-        }
-      });
-  }, [router]);
+  // Buscar dados completos do usuário (inclui assinatura e contagem de cultivos)
+  const dbUser = await prisma.user.findUnique({
+    where: { id: authUser.id },
+    include: {
+      subscription: true,
+      cultivations: { select: { id: true } },
+    },
+  })
 
-  if (checkingAuth || checkingOnboarding) return <GlobalLoading />;
-  if (!user) return <div className="p-8 text-center text-lg">Faça login para acessar o dashboard.</div>;
+  // Buscar cultivos do usuário diretamente via Prisma (evita round-trip de API)
+  const cultivations = await prisma.cultivation.findMany({
+    where: { userId: authUser.id },
+    take: 10,
+    orderBy: { createdAt: "desc" },
+  })
 
-  return <DashboardContent results={results} cycleParams={cycleParams} user={user} />;
+  const cycleParams = cultivations && cultivations.length > 0 ? cultivations[0] : null
+  const results = cultivations ?? []
+
+  const userForPermissions = dbUser ? {
+    id: dbUser.id,
+    email: dbUser.email,
+    name: dbUser.name,
+    role: dbUser.role,
+    subscription: dbUser.subscription,
+    cultivationCount: dbUser.cultivations.length,
+  } : { id: authUser.id, email: authUser.email }
+
+  return (
+    <>
+      <OnboardingGuard />
+      <DashboardContent results={results} cycleParams={cycleParams} user={userForPermissions} />
+    </>
+  )
 } 

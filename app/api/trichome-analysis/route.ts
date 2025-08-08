@@ -2,16 +2,22 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { TrichomeAnalysis, TrichomeDetection, calculateOptimalHarvest, ImgBBResponse } from '@/types/trichome-analysis'
 
+const MAX_IMAGE_BYTES = 15 * 1024 * 1024 // 15MB
+const ALLOWED_MIME = new Set(['image/jpeg','image/png','image/webp','image/heic','image/heif'])
+function sanitizeId(input: string): string {
+  return (input || '').replace(/[^a-zA-Z0-9-_]/g, '').slice(0, 64)
+}
+
 // Análise de Tricomas - 
 
 // Função para upload no imgBB
 async function uploadToImgBB(imageBase64: string, filename: string): Promise<string> {
   const formData = new FormData()
   
-  // Remove o prefixo data:image/...;base64, se existir
-  const base64Data = imageBase64.replace(/^data:image\/[a-z]+;base64,/, '')
+  // Remove o prefixo data:image/(permitidos);base64, se existir
+  const cleaned = imageBase64.replace(/^data:image\/(jpeg|png|webp|heic|heif);base64,/, '')
   
-  formData.append('image', base64Data)
+  formData.append('image', cleaned)
   formData.append('name', filename)
   
   const response = await fetch(`https://api.imgbb.com/1/upload?key=${process.env.IMGBB_API_KEY}`, {
@@ -319,6 +325,10 @@ function generateTrichomeAnalysis(
   }
 }
 
+function isLikelyImageMime(type: string): boolean {
+  return ALLOWED_MIME.has(type)
+}
+
 export async function POST(request: NextRequest) {
   try {
     console.log('🔬 Iniciando análise de tricomas...')
@@ -333,7 +343,8 @@ export async function POST(request: NextRequest) {
     
     const formData = await request.formData()
     const file = formData.get('image') as File
-    const cultivationId = formData.get('cultivationId') as string
+    const cultivationIdRaw = formData.get('cultivationId') as string
+    const cultivationId = sanitizeId(cultivationIdRaw)
     
     if (!file || !cultivationId) {
       return NextResponse.json({ 
@@ -342,16 +353,16 @@ export async function POST(request: NextRequest) {
     }
     
     // Validar tipo de arquivo
-    if (!file.type.startsWith('image/')) {
+    if (!file.type || !isLikelyImageMime(file.type)) {
       return NextResponse.json({ 
-        error: 'Arquivo deve ser uma imagem' 
+        error: 'Arquivo deve ser uma imagem (jpeg, png, webp, heic)' 
       }, { status: 400 })
     }
     
-    // Validar tamanho (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
+    // Validar tamanho (max 15MB)
+    if (file.size > MAX_IMAGE_BYTES) {
       return NextResponse.json({ 
-        error: 'Imagem deve ter menos de 10MB' 
+        error: 'Imagem deve ter menos de 15MB' 
       }, { status: 400 })
     }
     
@@ -399,13 +410,11 @@ export async function POST(request: NextRequest) {
   } catch (error: unknown) {
     console.error('❌ Erro na análise de tricomas:', error)
     
-    // Extrair mensagem de erro mais útil
     let errorMessage = 'Erro desconhecido na análise de tricomas';
     if (error instanceof Error) {
       errorMessage = error.message;
     }
     
-    // Retornar resposta de erro com mais detalhes
     return NextResponse.json({
       success: false,
       error: errorMessage,
@@ -435,10 +444,7 @@ export async function GET(request: NextRequest) {
       }
     })
     
-  } catch (error) {
-    console.error('❌ Erro:', error)
-    return NextResponse.json({
-      error: 'Erro interno'
-    }, { status: 500 })
+  } catch (e) {
+    return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 })
   }
 }

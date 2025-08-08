@@ -131,6 +131,7 @@ export async function PATCH(
     if (body.dias_vegetativo !== undefined) updateData.dias_vegetativo = Number(body.dias_vegetativo);
     if (body.dias_veg !== undefined) updateData.dias_veg = Number(body.dias_veg);
     if (body.dias_racao !== undefined) updateData.dias_racao = Number(body.dias_racao);
+    if (body.horas_luz_veg !== undefined) updateData.horas_luz_veg = Number(body.horas_luz_veg);
     if (body.horas_luz_flor !== undefined) updateData.horas_luz_flor = Number(body.horas_luz_flor);
     if (body.dias_secagem_cura !== undefined) updateData.dias_secagem_cura = Number(body.dias_secagem_cura);
     if (body.preco_kwh !== undefined) updateData.preco_kwh = Number(body.preco_kwh);
@@ -139,6 +140,7 @@ export async function PATCH(
     if (body.custo_nutrientes !== undefined) updateData.custo_nutrientes = Number(body.custo_nutrientes);
     if (body.custos_operacionais_misc !== undefined) updateData.custos_operacionais_misc = Number(body.custos_operacionais_misc);
     if (body.preco_venda_por_grama !== undefined) updateData.preco_venda_por_grama = Number(body.preco_venda_por_grama);
+    if (body.num_plantas !== undefined) updateData.num_plantas = Number(body.num_plantas);
 
     const updated = await prisma.cultivation.update({
       where: { id },
