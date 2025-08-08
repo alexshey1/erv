@@ -8,35 +8,43 @@ interface PWASplashWrapperProps {
 }
 
 export default function PWASplashWrapper({ children }: PWASplashWrapperProps) {
+  const [isClient, setIsClient] = useState(false)
   const [showSplash, setShowSplash] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
 
+  // This effect runs only on the client, after the initial render
   useEffect(() => {
-    // Check if app is running as PWA
     const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
                   (window.navigator as any).standalone || 
                   document.referrer.includes('android-app://') ||
                   window.location.href.includes('?source=pwa')
 
-    // Show splash only for PWA or first visit
     const hasSeenSplash = localStorage.getItem('ervapp-splash-shown')
     
     if (isPWA || !hasSeenSplash) {
       setShowSplash(true)
       localStorage.setItem('ervapp-splash-shown', 'true')
-    } else {
-      setIsLoading(false)
     }
+    
+    // Mark that we are on the client and the logic has run
+    setIsClient(true)
   }, [])
 
   const handleSplashFinish = () => {
     setShowSplash(false)
-    setIsLoading(false)
   }
 
-  if (isLoading && showSplash) {
+  // During SSR, `isClient` is false, so we render nothing to avoid mismatch.
+  // Once on the client, if we should show the splash, show it.
+  if (isClient && showSplash) {
     return <SplashScreen onFinish={handleSplashFinish} />
   }
 
-  return <>{children}</>
+  // After splash (or if not needed), render children, but only on the client.
+  // This prevents rendering children on the server and then flashing the splash on the client.
+  if (isClient) {
+    return <>{children}</>
+  }
+
+  // Render null on the server to prevent any hydration errors.
+  return null
 }

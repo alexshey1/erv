@@ -130,15 +130,7 @@ const nextConfig = {
   },
   
   // PWA capabilities
-  async rewrites() {
-    return [
-      {
-        source: '/sw.js',
-        destination: '/api/sw',
-      },
-    ]
-  },
-
+  
   // Headers de segurança
   async headers() {
     return [
