@@ -7,6 +7,7 @@ import { AuthProvider } from "@/components/providers/auth-provider"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/react"
 import ServiceWorkerRegistration from "@/components/service-worker-registration"
+import PWASplashWrapper from "@/components/pwa-splash-wrapper"
 
 
 const inter = Inter({ subsets: ["latin"] })
@@ -111,13 +112,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <html lang="pt-BR" suppressHydrationWarning>
 
       <body className={inter.className}>
-        <Suspense fallback={<SimpleFallback />}>
-        <AuthProvider>
-            <Suspense fallback={<GlobalLoading />}>
-              {children}
-            </Suspense>
-        </AuthProvider>
-        </Suspense>
+        <PWASplashWrapper>
+          <Suspense fallback={<SimpleFallback />}>
+          <AuthProvider>
+              <Suspense fallback={<GlobalLoading />}>
+                {children}
+              </Suspense>
+          </AuthProvider>
+          </Suspense>
+        </PWASplashWrapper>
         <ServiceWorkerRegistration />
         <SpeedInsights />
         <Analytics />
