@@ -26,6 +26,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { ImageUpload } from "@/components/forms/image-upload"
 import { ContentLoading, SmoothLoadingSpinner, FadeIn } from "@/components/ui/smooth-transitions"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Label } from "@/components/ui/label"
 
 type EventType =
   | "start_veg"
@@ -415,41 +417,50 @@ export function CultivationTimeline({ events, incidents, cultivationId, cultivat
             <DialogTitle>Novo Evento</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
-            <label className="block text-sm font-medium">Tipo</label>
-            <select className="w-full border rounded p-2" value={newEvent.type} onChange={e => setNewEvent((prev: any) => ({ ...prev, type: e.target.value }))}>
-              <option value="irrigation">Irrigação</option>
-              <option value="fertilization">Fertilização</option>
-              <option value="pruning">Poda</option>
-              <option value="pest">Praga</option>
-              <option value="disease">Doença</option>
-              <option value="environmental_stress">Estresse Ambiental</option>
-              <option value="action">Outro</option>
-            </select>
-            <label className="block text-sm font-medium">Descrição</label>
-            <Textarea value={newEvent.description} onChange={e => setNewEvent((prev: any) => ({ ...prev, description: e.target.value }))} />
-            <label className="block text-sm font-medium">Nível de Dano</label>
-            <select className="w-full border rounded p-2" value={newEvent.details.nivelDano} onChange={e => setNewEvent((prev: any) => ({ ...prev, details: { ...prev.details, nivelDano: e.target.value } }))}>
-              <option value="">Selecione</option>
-              <option value="leve">Leve</option>
-              <option value="moderado">Moderado</option>
-              <option value="severo">Severo</option>
-            </select>
+            <Label className="text-sm font-medium">Tipo</Label>
+            <Select value={newEvent.type} onValueChange={(v) => setNewEvent((prev: any) => ({ ...prev, type: v }))}>
+              <SelectTrigger className="bg-white">
+                <SelectValue placeholder="Selecione o tipo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="irrigation" className="flex items-center gap-2"><Droplets className="h-4 w-4" /> Irrigação</SelectItem>
+                <SelectItem value="fertilization" className="flex items-center gap-2"><FlaskConical className="h-4 w-4" /> Fertilização</SelectItem>
+                <SelectItem value="pruning" className="flex items-center gap-2"><Scissors className="h-4 w-4" /> Poda</SelectItem>
+                <SelectItem value="pest" className="flex items-center gap-2"><Bug className="h-4 w-4" /> Praga</SelectItem>
+                <SelectItem value="disease" className="flex items-center gap-2"><AlertTriangle className="h-4 w-4" /> Doença</SelectItem>
+                <SelectItem value="environmental_stress" className="flex items-center gap-2"><Sun className="h-4 w-4" /> Estresse Ambiental</SelectItem>
+                <SelectItem value="action" className="flex items-center gap-2"><Info className="h-4 w-4" /> Outro</SelectItem>
+              </SelectContent>
+            </Select>
+            <Label className="text-sm font-medium">Descrição</Label>
+            <Textarea className="bg-white" value={newEvent.description} onChange={e => setNewEvent((prev: any) => ({ ...prev, description: e.target.value }))} />
+            <Label className="text-sm font-medium">Nível de Dano</Label>
+            <Select value={newEvent.details.nivelDano || ""} onValueChange={(v) => setNewEvent((prev: any) => ({ ...prev, details: { ...prev.details, nivelDano: v } }))}>
+              <SelectTrigger className="bg-white">
+                <SelectValue placeholder="Selecione" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="leve" className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-green-600" /> Leve</SelectItem>
+                <SelectItem value="moderado" className="flex items-center gap-2"><AlertTriangle className="h-4 w-4 text-amber-600" /> Moderado</SelectItem>
+                <SelectItem value="severo" className="flex items-center gap-2"><AlertTriangle className="h-4 w-4 text-red-600" /> Severo</SelectItem>
+              </SelectContent>
+            </Select>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="block text-sm font-medium">pH</label>
-                <Input type="number" value={newEvent.details.ph} onChange={e => setNewEvent((prev: any) => ({ ...prev, details: { ...prev.details, ph: e.target.value } }))} />
+                <Label className="text-sm font-medium">pH</Label>
+                <Input className="bg-white" type="number" value={newEvent.details.ph} onChange={e => setNewEvent((prev: any) => ({ ...prev, details: { ...prev.details, ph: e.target.value } }))} />
               </div>
               <div>
-                <label className="block text-sm font-medium">EC</label>
-                <Input type="number" value={newEvent.details.ec} onChange={e => setNewEvent((prev: any) => ({ ...prev, details: { ...prev.details, ec: e.target.value } }))} />
+                <Label className="text-sm font-medium">EC</Label>
+                <Input className="bg-white" type="number" value={newEvent.details.ec} onChange={e => setNewEvent((prev: any) => ({ ...prev, details: { ...prev.details, ec: e.target.value } }))} />
               </div>
               <div>
-                <label className="block text-sm font-medium">Temperatura (°C)</label>
-                <Input type="number" value={newEvent.details.temperatura} onChange={e => setNewEvent((prev: any) => ({ ...prev, details: { ...prev.details, temperatura: e.target.value } }))} />
+                <Label className="text-sm font-medium">Temperatura (°C)</Label>
+                <Input className="bg-white" type="number" value={newEvent.details.temperatura} onChange={e => setNewEvent((prev: any) => ({ ...prev, details: { ...prev.details, temperatura: e.target.value } }))} />
               </div>
               <div>
-                <label className="block text-sm font-medium">Umidade (%)</label>
-                <Input type="number" value={newEvent.details.umidade} onChange={e => setNewEvent((prev: any) => ({ ...prev, details: { ...prev.details, umidade: e.target.value } }))} />
+                <Label className="text-sm font-medium">Umidade (%)</Label>
+                <Input className="bg-white" type="number" value={newEvent.details.umidade} onChange={e => setNewEvent((prev: any) => ({ ...prev, details: { ...prev.details, umidade: e.target.value } }))} />
               </div>
             </div>
             <label className="block text-sm font-medium">Fotos</label>
@@ -459,7 +470,7 @@ export function CultivationTimeline({ events, incidents, cultivationId, cultivat
               className="mt-2"
             />
             <label className="block text-sm font-medium">Data</label>
-            <Input type="date" value={newEvent.date} onChange={e => setNewEvent((prev: any) => ({ ...prev, date: e.target.value }))} />
+            <Input className="bg-white" type="date" value={newEvent.date} onChange={e => setNewEvent((prev: any) => ({ ...prev, date: e.target.value }))} />
             <div className="flex justify-end gap-2 mt-4">
               <Button variant="outline" onClick={() => setShowAddModal(false)}>Cancelar</Button>
               <Button onClick={handleAddEvent}>Salvar Evento</Button>

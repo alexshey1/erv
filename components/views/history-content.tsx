@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button"
 import { CultivationCard } from "@/components/cultivation-card"
 import { AggregateStats } from "@/components/dashboard/aggregate-stats"
 import { CultivationComparison } from "@/components/views/cultivation-comparison"
-import { HistoryCharts } from "@/components/charts/history-charts"
+import dynamic from 'next/dynamic'
+const HistoryCharts = dynamic(() => import('@/components/charts/history-charts').then(m => m.HistoryCharts), { ssr: false, loading: () => null })
 import { CultivationSummary } from "@/lib/mock-data"
 import { calculateResults } from "@/lib/cultivation-calculator"
 import { Search, GitCompare, Plus, BarChart3, TrendingUp, Filter, Trash2, Pencil } from "lucide-react"
@@ -60,53 +61,33 @@ export function HistoryContent() {
   useEffect(() => {
     const loadCultivations = async () => {
       setIsLoading(true)
-      
-      // Limpar dados mock do localStorage
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("cultivations")
-      }
-      
       try {
-        // Sempre tentar carregar do banco de dados primeiro
-        const response = await fetch('/api/cultivation');
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success) {
-            // Converter para o formato esperado pelo componente
-            const dbCultivations: CultivationSummary[] = data.cultivations.map((cultivation: any) => ({
-              id: cultivation.id,
-              name: cultivation.name,
-              seedStrain: cultivation.seedStrain,
-              startDate: new Date(cultivation.startDate).toISOString().split('T')[0],
-              endDate: cultivation.endDate ? new Date(cultivation.endDate).toISOString().split('T')[0] : null,
-              yield_g: cultivation.yield_g,
-              profit_brl: cultivation.profit_brl,
-              status: cultivation.status,
-              durationDays: cultivation.durationDays,
-              hasSevereProblems: false,
-              photoUrl: cultivation.photoUrl || "",
-            }));
-            
-            // Usar apenas dados do banco
-            setCultivations(dbCultivations);
-            
-            // Atualizar localStorage apenas com dados do banco
-            if (typeof window !== "undefined") {
-              localStorage.setItem("cultivations", JSON.stringify(dbCultivations));
-            }
-            return;
-          }
-        }
-      } catch (error) {
-        console.error('Erro ao carregar cultivos do banco:', error);
+        const data = await (await import('@/services/cultivations')).listCultivations()
+        const dbCultivations: CultivationSummary[] = data.map((cultivation: any) => ({
+          id: cultivation.id,
+          name: cultivation.name,
+          seedStrain: cultivation.seedStrain,
+          startDate: new Date(cultivation.startDate).toISOString().split('T')[0],
+          endDate: cultivation.endDate ? new Date(cultivation.endDate).toISOString().split('T')[0] : null,
+          yield_g: cultivation.yield_g,
+          profit_brl: cultivation.profit_brl,
+          status: cultivation.status,
+          durationDays: cultivation.durationDays,
+          hasSevereProblems: false,
+          photoUrl: cultivation.photoUrl || "",
+        }))
+        setCultivations(dbCultivations)
+        if (typeof window !== 'undefined') localStorage.setItem('cultivations', JSON.stringify(dbCultivations))
+      } catch (err) {
+        console.error(err)
+        setCultivations([])
+      } finally {
+        setIsLoading(false)
       }
-
-      // Se não conseguir carregar do banco, usar array vazio
-      setCultivations([])
     }
 
     setIsClient(true)
-    loadCultivations().finally(() => setIsLoading(false))
+    loadCultivations()
   }, [])
 
   // Carregar usuário
@@ -274,40 +255,16 @@ export function HistoryContent() {
       console.log('🔍 Enviando dados para API:', cultivationData);
 
       // Salvar no banco de dados
-      const response = await fetch('/api/cultivation', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(cultivationData),
-      });
-
-      console.log('📝 Resposta da API:', response.status, response.statusText);
-
-      if (!response.ok) {
-        let errorMessage = `Erro ${response.status}: ${response.statusText}`;
-        
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.error || errorMessage;
-          console.error('❌ Detalhes do erro:', errorData);
-        } catch (parseError) {
-          console.error('❌ Erro ao fazer parse da resposta:', parseError);
-          // Tentar ler como texto se não for JSON
-          const textResponse = await response.text();
-          console.error('📝 Resposta como texto:', textResponse);
-        }
-        
-        throw new Error(`Erro ao salvar cultivo: ${errorMessage}`);
-      }
-
-      const result = await response.json();
-      console.log('Cultivo salvo no banco:', result.cultivation);
+      const { createCultivation } = await import('@/services/cultivations')
+      const resultCultivation = await createCultivation({
+        ...cultivationData,
+      } as any)
+      console.log('Cultivo salvo no banco:', resultCultivation);
 
       // Criar evento inicial automático no banco de dados
       try {
         const initialEvent = {
-          id: `event_${result.cultivation.id}_germination`,
+          id: `event_${resultCultivation.id}_germination`,
           date: newCultivation.startDate,
           type: "start_veg" as const,
           description: "Germinação e início da fase vegetativa",
@@ -326,7 +283,7 @@ export function HistoryContent() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            cultivationId: result.cultivation.id,
+            cultivationId: resultCultivation.id,
             event: initialEvent
           }),
         });
@@ -342,15 +299,15 @@ export function HistoryContent() {
 
       // Criar objeto para o estado local
       const newItem: CultivationSummary = {
-        id: result.cultivation.id,
-        name: result.cultivation.name,
-        seedStrain: result.cultivation.seedStrain,
-        startDate: new Date(result.cultivation.startDate).toISOString().split('T')[0],
-        endDate: result.cultivation.endDate ? new Date(result.cultivation.endDate).toISOString().split('T')[0] : null,
-        yield_g: result.cultivation.yield_g,
-        profit_brl: result.cultivation.profit_brl,
-        status: result.cultivation.status,
-        durationDays: result.cultivation.durationDays,
+        id: resultCultivation.id,
+        name: resultCultivation.name,
+        seedStrain: resultCultivation.seedStrain,
+        startDate: new Date(resultCultivation.startDate).toISOString().split('T')[0],
+        endDate: resultCultivation.endDate ? new Date(resultCultivation.endDate).toISOString().split('T')[0] : null,
+        yield_g: resultCultivation.yield_g,
+        profit_brl: resultCultivation.profit_brl,
+        status: resultCultivation.status,
+        durationDays: resultCultivation.durationDays,
         hasSevereProblems: false,
       }
 
@@ -385,7 +342,9 @@ export function HistoryContent() {
   })
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
-  const uniqueStrains = Array.from(new Set(cultivations.map(c => c.seedStrain))).filter(Boolean)
+  const uniqueStrains = Array.from(new Set(
+    cultivations.flatMap(c => (c.seedStrain ? c.seedStrain.split(',').map(s => s.trim()).filter(Boolean) : []))
+  )).filter(Boolean)
 
   const handleAdvancedFilterChange = (field: string, value: string) => {
     setAdvancedFilters(prev => ({ ...prev, [field]: value }))
@@ -398,9 +357,9 @@ export function HistoryContent() {
     .filter((cultivation: CultivationSummary) => {
       const matchesSearch =
         cultivation.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        cultivation.seedStrain.toLowerCase().includes(searchTerm.toLowerCase())
+        (cultivation.seedStrain || '').toLowerCase().includes(searchTerm.toLowerCase())
       const matchesStatus = filterStatus === "all" || cultivation.status === filterStatus
-      const matchesStrain = !advancedFilters.strain || cultivation.seedStrain === advancedFilters.strain
+      const matchesStrain = !advancedFilters.strain || (cultivation.seedStrain || '').split(',').map(s => s.trim()).includes(advancedFilters.strain)
       const matchesYield = (!advancedFilters.minYield || cultivation.yield_g >= Number(advancedFilters.minYield)) &&
         (!advancedFilters.maxYield || cultivation.yield_g <= Number(advancedFilters.maxYield))
       const matchesStartDateFrom = !advancedFilters.startDateFrom || new Date(cultivation.startDate) >= new Date(advancedFilters.startDateFrom)
@@ -506,24 +465,16 @@ export function HistoryContent() {
 
       // Fazer PATCH para o banco de dados
       console.log('Enviando PATCH para', `/api/cultivation/${editCultivationId}`);
-      const res = await fetch(`/api/cultivation/${editCultivationId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: editData.name,
-          seedStrain: editData.seedStrain,
-          startDate: editData.startDate,
-          status: editData.status,
-          yield_g: editData.yield_g,
-          profit_brl: calculatedProfit,
-          durationDays: durationDays,
-        }),
-      });
-      
-      const data = await res.json();
-      console.log('PATCH resposta:', data);
-
-      if (data.success) {
+      const { updateCultivation } = await import('@/services/cultivations')
+      await updateCultivation(editCultivationId, {
+        name: editData.name,
+        seedStrain: editData.seedStrain,
+        startDate: editData.startDate,
+        status: editData.status as any,
+        yield_g: Number(editData.yield_g) || 0,
+        profit_brl: calculatedProfit,
+        durationDays: durationDays,
+      } as any)
         // Atualizar estado local
         const updated = cultivations.map((c) =>
           c.id === editCultivationId
@@ -547,10 +498,6 @@ export function HistoryContent() {
         
         // Recarregar dados para sincronizar com o dashboard
         window.location.reload();
-      } else {
-        console.error('Erro ao atualizar cultivo:', data.error);
-        alert('Erro ao atualizar cultivo. Tente novamente.');
-      }
     } catch (error) {
       console.error('Erro ao fazer PATCH:', error);
       alert('Erro ao atualizar cultivo. Tente novamente.');
@@ -574,26 +521,9 @@ export function HistoryContent() {
 
     setIsDeleting(true)
     try {
-      // Excluir do banco de dados
-      const response = await fetch(`/api/cultivation/${deleteCultivationId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        let errorMessage = `Erro ${response.status}: ${response.statusText}`;
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.error || errorMessage;
-        } catch (parseError) {
-          console.error('Erro ao parsear resposta de erro:', parseError);
-        }
-        throw new Error(`Erro ao excluir cultivo: ${errorMessage}`);
-      }
-
-      console.log('Cultivo excluído do banco com sucesso');
+      const { deleteCultivation } = await import('@/services/cultivations')
+      await deleteCultivation(deleteCultivationId)
+      console.log('Cultivo excluído do banco com sucesso')
 
       // Atualizar estado local
       const updated = cultivations.filter(c => c.id !== deleteCultivationId)

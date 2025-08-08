@@ -57,15 +57,32 @@ export function NewCultivationModal({ open, onClose, onSubmit, values, onChange,
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [cycleValidation, setCycleValidation] = useState<{ valid: boolean; warnings: string[] }>({ valid: true, warnings: [] })
   const [lastProcessedGenetics, setLastProcessedGenetics] = useState<string>("")
+  const [strainInput, setStrainInput] = useState("")
+  const [strainTags, setStrainTags] = useState<string[]>(() => (values.seedStrain ? values.seedStrain.split(',').map(s => s.trim()).filter(Boolean) : []))
 
+  // Sincronizar tags -> string no form externo
+  useEffect(() => {
+    onChange("seedStrain", strainTags.join(', '))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [strainTags])
+
+  const addStrainTag = (raw: string) => {
+    const v = raw.trim()
+    if (!v) return
+    setStrainTags(prev => (prev.includes(v) ? prev : [...prev, v]))
+    setStrainInput("")
+  }
+  const removeStrainTag = (v: string) => setStrainTags(prev => prev.filter(t => t !== v))
+ 
   // Efeito para carregar configuração baseada na genética
   useEffect(() => {
-    if (values.seedStrain && values.plant_type) {
-      const geneticsKey = `${values.seedStrain}-${values.plant_type}`
+    const firstStrain = (values.seedStrain || '').split(',')[0]?.trim()
+    if (firstStrain && values.plant_type) {
+      const geneticsKey = `${firstStrain}-${values.plant_type}`
       
       // Só processar se for uma nova combinação
       if (geneticsKey !== lastProcessedGenetics) {
-        const configFromGenetics = getCycleConfigFromGenetics(values.seedStrain, values.plant_type)
+        const configFromGenetics = getCycleConfigFromGenetics(firstStrain, values.plant_type)
         setCustomCycleParams(configFromGenetics)
         onChange("custom_cycle_params", configFromGenetics)
         
@@ -181,16 +198,38 @@ export function NewCultivationModal({ open, onClose, onSubmit, values, onChange,
                 
                 <div>
                   <label className="block text-sm font-medium mb-1">
-                    Variedade/Strain
+                    Variedades/Strains
                     {errors?.seedStrain && <span className="text-red-600 text-xs ml-2">{errors.seedStrain}</span>}
                   </label>
-                  <Input 
-                    placeholder="Ex: OG Kush, Northern Lights Auto" 
-                    value={values.seedStrain} 
-                    onChange={e => onChange("seedStrain", e.target.value)}
+                  {/* Tags */}
+                  {strainTags.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mb-2">
+                      {strainTags.map(tag => (
+                        <Badge key={tag} variant="secondary" className="text-xs flex items-center gap-1">
+                          {tag}
+                          <button type="button" aria-label={`Remover ${tag}`} onClick={() => removeStrainTag(tag)} className="ml-1 text-gray-500 hover:text-gray-800">×</button>
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                  {/* Input com Enter/ vírgula para adicionar */}
+                  <Input
+                    placeholder="Ex: OG Kush (Enter para adicionar)"
+                    value={strainInput}
+                    onChange={e => setStrainInput(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' || e.key === ',') {
+                        e.preventDefault()
+                        addStrainTag(strainInput)
+                      } else if (e.key === 'Backspace' && !strainInput && strainTags.length > 0) {
+                        removeStrainTag(strainTags[strainTags.length - 1])
+                      }
+                    }}
+                    onBlur={() => addStrainTag(strainInput)}
                     className="text-sm sm:text-base"
                   />
-                  {values.seedStrain && GENETICS_DATABASE[values.seedStrain.toLowerCase().replace(/\s+/g, '_')] && (
+                  {/* Reconhecimento da primeira genética */}
+                  {strainTags[0] && GENETICS_DATABASE[strainTags[0].toLowerCase().replace(/\s+/g, '_')] && (
                     <Badge variant="outline" className="mt-1 text-xs">
                       <Info className="h-3 w-3 mr-1" />
                       Genética reconhecida

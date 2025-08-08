@@ -86,7 +86,11 @@ export function HistoryCharts({ cultivations, user }: HistoryChartsProps) {
   const strainCounts: Record<string, number> = {}
   cultivations.forEach(c => {
     if (c.seedStrain) {
-      strainCounts[c.seedStrain] = (strainCounts[c.seedStrain] || 0) + 1
+      const parts = c.seedStrain.split(',').map(s => s.trim()).filter(Boolean)
+      if (parts.length === 0) return
+      parts.forEach(p => {
+        strainCounts[p] = (strainCounts[p] || 0) + 1
+      })
     }
   })
   const uniqueStrains = Object.keys(strainCounts)
