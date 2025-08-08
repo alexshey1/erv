@@ -1,0 +1,20 @@
+{
+  "welcome": "Welcome",
+  "dashboard": "Dashboard",
+  "cultivation": "Cultivation",
+  "reports": "Reports",
+  "settings": "Settings",
+  "logout": "Logout",
+  "login": "Login",
+  "register": "Register",
+  "email": "Email",
+  "password": "Password",
+  "submit": "Submit",
+  "cancel": "Cancel",
+  "save": "Save",
+  "delete": "Delete",
+  "edit": "Edit",
+  "loading": "Loading...",
+  "error": "Error",
+  "success": "Success"
+}

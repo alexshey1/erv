@@ -1,0 +1,62 @@
+{
+  "root": true,
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": [
+    "next/core-web-vitals"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "react",
+    "react-hooks"
+  ],
+  "ignorePatterns": [
+    "node_modules/",
+    ".next/",
+    "out/",
+    "build/",
+    "dist/",
+    "lib/generated/",
+    "*.generated.*",
+    "prisma/migrations/",
+    "coverage/",
+    ".swc/"
+  ],
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
+    "@typescript-eslint/no-unused-vars": ["warn", { 
+      "argsIgnorePattern": "^_",
+      "varsIgnorePattern": "^_"
+    }],
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-this-alias": "off",
+    "@typescript-eslint/no-unused-expressions": "off",
+    "no-unused-vars": "off",
+    "no-undef": "off",
+    "no-redeclare": "off",
+    "no-prototype-builtins": "off",
+    "no-useless-escape": "off",
+    "no-cond-assign": "off",
+    "no-empty": "off",
+    "no-constant-binary-expression": "off",
+    "no-unused-private-class-members": "off",
+    "no-unsafe-finally": "off",
+    "no-extra-boolean-cast": "off",
+    "no-unreachable": "off",
+    "no-control-regex": "off",
+    "@typescript-eslint/no-require-imports": "off",
+    "prefer-spread": "off"
+  }
+}

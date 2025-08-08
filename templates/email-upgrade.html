@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upgrade Realizado - ErvApp</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background-color: #f0fdf4; 
+            line-height: 1.6;
+        }
+        .container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            background-color: white; 
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header { 
+            background: linear-gradient(135deg, #7c3aed, #5b21b6); 
+            padding: 40px 20px; 
+            text-align: center; 
+        }
+        .logo { 
+            font-size: 48px; 
+            margin-bottom: 10px; 
+        }
+        .header h1 { 
+            color: white; 
+            margin: 0; 
+            font-size: 28px; 
+            font-weight: 700; 
+        }
+        .content { 
+            padding: 40px 20px; 
+        }
+        .plan-badge { 
+            display: inline-block; 
+            background: linear-gradient(135deg, #7c3aed, #5b21b6); 
+            color: white; 
+            padding: 8px 16px; 
+            border-radius: 20px; 
+            font-weight: 600; 
+            font-size: 14px; 
+            margin: 10px 0; 
+        }
+        .button { 
+            display: inline-block; 
+            background: #7c3aed; 
+            color: white; 
+            padding: 16px 32px; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            font-weight: 600; 
+            margin: 20px 0; 
+        }
+        .features { 
+            background-color: #faf5ff; 
+            padding: 30px 20px; 
+            margin: 30px 0; 
+            border-radius: 8px; 
+            border-left: 4px solid #7c3aed; 
+        }
+        .features h3 { 
+            color: #1f2937; 
+            margin-bottom: 20px; 
+        }
+        .features ul { 
+            margin: 0; 
+            padding-left: 20px; 
+        }
+        .features li { 
+            color: #4b5563; 
+            margin-bottom: 8px; 
+        }
+        .footer { 
+            background-color: #f9fafb; 
+            padding: 30px 20px; 
+            text-align: center; 
+            color: #6b7280; 
+            font-size: 14px; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🚀</div>
+            <h1>Upgrade Realizado!</h1>
+        </div>
+        
+        <div class="content">
+            <h2>Parabéns, {{.Name}}! 🎉</h2>
+            
+            <p>Seu upgrade foi processado com sucesso! Agora você tem acesso ao plano:</p>
+            
+            <p style="text-align: center;">
+                <span class="plan-badge">{{.NewPlan}} Plan</span>
+            </p>
+            
+            <p>Todas as novas funcionalidades já estão disponíveis na sua conta.</p>
+            
+            <p style="text-align: center;">
+                <a href="{{.SiteURL}}/dashboard" class="button">Explorar Novos Recursos</a>
+            </p>
+            
+            <div class="features">
+                <h3>🌟 Novos recursos desbloqueados:</h3>
+                <ul>
+                    {{#if isPremium}}
+                    <li>✨ Analytics Avançado</li>
+                    <li>📊 Relatórios Customizados</li>
+                    <li>🔔 Alertas Inteligentes</li>
+                    <li>📈 Dados em Tempo Real</li>
+                    <li>🤖 Analytics Preditivo</li>
+                    <li>🔗 Acesso à API</li>
+                    <li>📦 20GB de Armazenamento</li>
+                    {{/if}}
+                    
+                    {{#if isEnterprise}}
+                    <li>🏢 Recursos de Equipe</li>
+                    <li>⚡ Suporte Prioritário</li>
+                    <li>📊 Analytics Enterprise</li>
+                    <li>💾 100GB de Armazenamento</li>
+                    <li>🌱 Cultivos Ilimitados</li>
+                    {{/if}}
+                </ul>
+            </div>
+            
+            <h3>📋 Detalhes da Assinatura:</h3>
+            <ul style="color: #4b5563;">
+                <li><strong>Plano:</strong> {{.NewPlan}}</li>
+                <li><strong>Valor:</strong> R$ {{.Price}}/mês</li>
+                <li><strong>Próxima cobrança:</strong> {{.NextBilling}}</li>
+                <li><strong>Status:</strong> Ativo ✅</li>
+            </ul>
+            
+            <p>Você pode gerenciar sua assinatura a qualquer momento no painel de configurações da sua conta.</p>
+            
+            <p><strong>Obrigado por escolher o ErvApp!</strong> Estamos ansiosos para ver seus cultivos prosperarem com os novos recursos.</p>
+        </div>
+        
+        <div class="footer">
+            <p><strong>© 2024 ErvApp</strong> - Sua plataforma de cultivo inteligente</p>
+            <p>Precisa de ajuda? Nossa equipe está aqui para você!</p>
+            <p style="font-size: 12px; color: #9ca3af;">
+                Você pode cancelar sua assinatura a qualquer momento nas configurações da conta.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

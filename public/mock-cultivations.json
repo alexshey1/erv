@@ -1,0 +1,50 @@
+[
+  {
+    "id": "1",
+    "name": "White Widow",
+    "seedStrain": "White Widow",
+    "startDate": "2025-05-01",
+    "endDate": "2025-07-10",
+    "yield_g": 80,
+    "profit_brl": 0,
+    "status": "completed",
+    "durationDays": 70,
+    "hasSevereProblems": false
+  },
+  {
+    "id": "2",
+    "name": "Northern Lights",
+    "seedStrain": "Northern Lights",
+    "startDate": "2025-03-15",
+    "endDate": "2025-05-25",
+    "yield_g": 70,
+    "profit_brl": 0,
+    "status": "completed",
+    "durationDays": 71,
+    "hasSevereProblems": false
+  },
+  {
+    "id": "3",
+    "name": "Amnesia Haze",
+    "seedStrain": "Amnesia Haze",
+    "startDate": "2025-01-10",
+    "endDate": "2025-03-20",
+    "yield_g": 90,
+    "profit_brl": 0,
+    "status": "completed",
+    "durationDays": 69,
+    "hasSevereProblems": false
+  },
+  {
+    "id": "4",
+    "name": "Blue Dream",
+    "seedStrain": "Blue Dream",
+    "startDate": "2024-11-05",
+    "endDate": "2025-01-15",
+    "yield_g": 100,
+    "profit_brl": 0,
+    "status": "completed",
+    "durationDays": 71,
+    "hasSevereProblems": false
+  }
+]

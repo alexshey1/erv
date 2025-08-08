@@ -1,0 +1,24 @@
+import { AuthProviderSimple } from '@/components/providers/auth-provider-simple'
+
+export default function TestAuthPage() {
+  return (
+    <AuthProviderSimple>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            Teste do AuthProvider
+          </h1>
+          <p className="text-gray-600 mb-4">
+            Se você consegue ver esta página, o AuthProvider simplificado está funcionando.
+          </p>
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+            ✅ AuthProvider carregado com sucesso!
+          </div>
+          <p className="text-sm text-gray-500 mt-4">
+            Isso indica que o problema pode estar no Supabase ou nas dependências externas.
+          </p>
+        </div>
+      </div>
+    </AuthProviderSimple>
+  )
+} 

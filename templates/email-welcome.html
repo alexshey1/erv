@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bem-vindo ao ErvApp!</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background-color: #f0fdf4; 
+            line-height: 1.6;
+        }
+        .container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            background-color: white; 
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header { 
+            background: linear-gradient(135deg, #10b981, #059669); 
+            padding: 40px 20px; 
+            text-align: center; 
+        }
+        .logo { 
+            font-size: 48px; 
+            margin-bottom: 10px; 
+        }
+        .header h1 { 
+            color: white; 
+            margin: 0; 
+            font-size: 28px; 
+            font-weight: 700; 
+        }
+        .header p { 
+            color: rgba(255, 255, 255, 0.9); 
+            margin: 10px 0 0 0; 
+            font-size: 16px; 
+        }
+        .content { 
+            padding: 40px 20px; 
+        }
+        .content h2 { 
+            color: #1f2937; 
+            font-size: 24px; 
+            margin-bottom: 20px; 
+        }
+        .content p { 
+            color: #4b5563; 
+            font-size: 16px; 
+            margin-bottom: 16px; 
+        }
+        .button { 
+            display: inline-block; 
+            background: #10b981; 
+            color: white; 
+            padding: 16px 32px; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            font-weight: 600; 
+            margin: 20px 0; 
+            transition: background-color 0.3s;
+        }
+        .button:hover { 
+            background: #059669; 
+        }
+        .features { 
+            background-color: #f9fafb; 
+            padding: 30px 20px; 
+            margin: 30px 0; 
+            border-radius: 8px; 
+        }
+        .features h3 { 
+            color: #1f2937; 
+            font-size: 20px; 
+            margin-bottom: 20px; 
+            text-align: center; 
+        }
+        .feature-list { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 15px; 
+            margin: 0; 
+            padding: 0; 
+            list-style: none; 
+        }
+        .feature-list li { 
+            display: flex; 
+            align-items: center; 
+            color: #4b5563; 
+            font-size: 14px; 
+        }
+        .feature-list li::before { 
+            content: "✅"; 
+            margin-right: 8px; 
+        }
+        .footer { 
+            background-color: #f9fafb; 
+            padding: 30px 20px; 
+            text-align: center; 
+            color: #6b7280; 
+            font-size: 14px; 
+            border-top: 1px solid #e5e7eb; 
+        }
+        .social-links { 
+            margin: 20px 0; 
+        }
+        .social-links a { 
+            display: inline-block; 
+            margin: 0 10px; 
+            color: #10b981; 
+            text-decoration: none; 
+        }
+        @media (max-width: 600px) {
+            .feature-list { 
+                grid-template-columns: 1fr; 
+            }
+            .content { 
+                padding: 30px 15px; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🌱</div>
+            <h1>Bem-vindo ao ErvApp!</h1>
+            <p>Sua jornada de cultivo inteligente começa agora</p>
+        </div>
+        
+        <div class="content">
+            <h2>Olá, {{.Name}}! 👋</h2>
+            
+            <p>É com grande alegria que damos as boas-vindas ao <strong>ErvApp</strong>, a plataforma mais completa para gerenciamento de cultivos!</p>
+            
+            <p>Sua conta foi criada com sucesso e você já pode começar a explorar todas as funcionalidades que preparamos para você.</p>
+            
+            <p style="text-align: center;">
+                <a href="{{.SiteURL}}/dashboard" class="button">Acessar Minha Conta</a>
+            </p>
+            
+            <div class="features">
+                <h3>🚀 O que você pode fazer agora:</h3>
+                <ul class="feature-list">
+                    <li>Criar seu primeiro cultivo</li>
+                    <li>Acompanhar o crescimento</li>
+                    <li>Registrar eventos importantes</li>
+                    <li>Calcular custos e lucros</li>
+                    <li>Gerar relatórios detalhados</li>
+                    <li>Receber alertas inteligentes</li>
+                    <li>Comparar diferentes cultivos</li>
+                    <li>Exportar seus dados</li>
+                </ul>
+            </div>
+            
+            <h3>📚 Primeiros Passos:</h3>
+            <ol style="color: #4b5563;">
+                <li><strong>Complete seu perfil</strong> - Adicione suas informações pessoais</li>
+                <li><strong>Crie seu primeiro cultivo</strong> - Comece registrando uma nova plantação</li>
+                <li><strong>Explore o dashboard</strong> - Familiarize-se com as funcionalidades</li>
+                <li><strong>Configure alertas</strong> - Receba notificações importantes</li>
+            </ol>
+            
+            <p>Se tiver alguma dúvida, nossa equipe de suporte está sempre pronta para ajudar. Basta responder este email ou acessar nossa central de ajuda.</p>
+            
+            <p><strong>Dica:</strong> Comece com o plano Free e faça upgrade quando precisar de mais recursos!</p>
+        </div>
+        
+        <div class="footer">
+            <p><strong>© 2024 ErvApp</strong> - Sua plataforma de cultivo inteligente</p>
+            
+            <div class="social-links">
+                <a href="#">📧 Suporte</a>
+                <a href="#">📖 Documentação</a>
+                <a href="#">💬 Comunidade</a>
+            </div>
+            
+            <p>Este é um email automático, mas você pode responder se tiver dúvidas!</p>
+            <p style="font-size: 12px; color: #9ca3af;">
+                Se você não criou uma conta no ErvApp, pode ignorar este email.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

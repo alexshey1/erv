@@ -1,0 +1,227 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id                      String                   @id @default(uuid())
+  email                   String                   @unique
+  name                    String?
+  role                    String                   @default("free")
+  avatar                  String?
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @default(now()) @updatedAt
+  events                  CultivationEvent[]
+  cultivations            Cultivation[]
+  incidents               Incident[]
+  notificationPreferences NotificationPreferences?
+  notifications           Notification[]
+  pushSubscriptions       PushSubscription[]
+  subscription            Subscription?
+
+  @@map("users")
+}
+
+model Subscription {
+  id        String   @id @default(cuid())
+  plan      String
+  status    String   @default("active")
+  startDate DateTime @default(now())
+  endDate   DateTime
+  autoRenew Boolean  @default(true)
+  price     Float
+  currency  String   @default("BRL")
+  features  String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+model Cultivation {
+  id                        String             @id @default(cuid())
+  name                      String
+  seedStrain                String
+  startDate                 DateTime
+  endDate                   DateTime?
+  status                    String             @default("active")
+  yield_g                   Float              @default(0)
+  profit_brl                Float              @default(0)
+  durationDays              Int                @default(0)
+  hasSevereProblems         Boolean            @default(false)
+  photoUrl                  String?
+  floracaoDate              DateTime?
+  colheitaDate              DateTime?
+  secagemDate               DateTime?
+  curaDate                  DateTime?
+  area_m2                   Float              @default(2.25)
+  custo_equip_iluminacao    Float              @default(200)
+  custo_tenda_estrutura     Float              @default(150)
+  custo_ventilacao_exaustao Float              @default(800)
+  custo_outros_equipamentos Float              @default(500)
+  potencia_watts            Int                @default(480)
+  producao_por_planta_g     Float              @default(80)
+  dias_vegetativo           Int                @default(60)
+  dias_veg                  Int                @default(18)
+  dias_racao                Int                @default(70)
+  horas_luz_flor            Int                @default(12)
+  dias_secagem_cura         Int                @default(20)
+  preco_kwh                 Float              @default(0.95)
+  custo_sementes_clones     Float              @default(50)
+  custo_substrato           Float              @default(120)
+  custo_nutrientes          Float              @default(350)
+  custos_operacionais_misc  Float              @default(10)
+  preco_venda_por_grama     Float              @default(45)
+  // Novos campos para ciclo adaptativo
+  plant_type                String?            // 'photoperiod', 'autoflower', 'custom'
+  cycle_preset_id           String?            // ID do preset usado, se aplicável
+  custom_cycle_params       String?            // JSON string com configurações customizadas
+  createdAt                 DateTime           @default(now())
+  updatedAt                 DateTime           @updatedAt
+  userId                    String
+  events                    CultivationEvent[]
+  images                    CultivationImage[]
+  user                      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  incidents                 Incident[]
+
+  @@map("cultivations")
+}
+
+model CultivationEvent {
+  id            String             @id @default(cuid())
+  type          String
+  title         String
+  description   String?
+  date          DateTime
+  photos        String
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  cultivationId String
+  userId        String
+  cultivation   Cultivation        @relation(fields: [cultivationId], references: [id], onDelete: Cascade)
+  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  images        CultivationImage[]
+
+  @@map("cultivation_events")
+}
+
+model Incident {
+  id               String      @id @default(cuid())
+  type             String
+  severity         String
+  description      String
+  correctiveAction String?
+  date             DateTime
+  photoUrl         String?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  cultivationId    String
+  userId           String
+  cultivation      Cultivation @relation(fields: [cultivationId], references: [id], onDelete: Cascade)
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("incidents")
+}
+
+model CultivationImage {
+  id            String            @id @default(cuid())
+  publicId      String            @unique
+  secureUrl     String
+  filename      String?
+  fileSize      Int?
+  mimeType      String?
+  width         Int?
+  height        Int?
+  format        String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  cultivationId String
+  eventId       String?
+  cultivation   Cultivation       @relation(fields: [cultivationId], references: [id], onDelete: Cascade)
+  event         CultivationEvent? @relation(fields: [eventId], references: [id])
+
+  @@map("cultivation_images")
+}
+
+model Notification {
+  id          String                @id @default(cuid())
+  title       String
+  message     String
+  isRead      Boolean               @default(false)
+  createdAt   DateTime              @default(now())
+  actionUrl   String?
+  channels    NotificationChannel[]
+  clickedAt   DateTime?
+  deliveredAt DateTime?
+  metadata    Json?
+  priority    NotificationPriority  @default(MEDIUM)
+  readAt      DateTime?
+  userId      String
+  type        NotificationType
+  user        User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  userAgent String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  lastUsed  DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("push_subscriptions")
+}
+
+model NotificationPreferences {
+  id              String   @id @default(cuid())
+  reminders       Boolean  @default(true)
+  alerts          Boolean  @default(true)
+  achievements    Boolean  @default(true)
+  marketing       Boolean  @default(false)
+  pushEnabled     Boolean  @default(true)
+  emailEnabled    Boolean  @default(true)
+  quietHoursStart Int?
+  quietHoursEnd   Int?
+  timezone        String   @default("America/Sao_Paulo")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notification_preferences")
+}
+
+enum NotificationType {
+  REMINDER
+  ALERT
+  ACHIEVEMENT
+  SYSTEM
+  MARKETING
+}
+
+enum NotificationPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum NotificationChannel {
+  IN_APP
+  PUSH
+  EMAIL
+  SMS
+}
