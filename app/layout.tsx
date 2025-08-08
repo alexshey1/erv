@@ -29,12 +29,6 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-  },
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
   alternates: {
     canonical: '/',
@@ -99,11 +93,6 @@ export function generateViewport() {
     colorScheme: 'light dark',
   };
 }
-
-export const viewport = {
-  width: 'device-width',
-  initialScale: 1,
-};
 
 // Componente de fallback simples
 function SimpleFallback() {
