@@ -9,7 +9,7 @@ const securityHeaders = [
       "font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com",
       "img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://via.placeholder.com",
       "media-src 'self' https://res.cloudinary.com",
-      "connect-src 'self' https://*.supabase.co https://api.weatherapi.com https://pt.libretranslate.com https://*.upstash.io https://o4507902068293632.ingest.us.sentry.io https://vitals.vercel-insights.com https://vercel-insights.com https://translate.googleapis.com https://va.vercel-scripts.com https://fonts.googleapis.com https://fonts.gstatic.com https://res.cloudinary.com",
+      "connect-src 'self' https://*.supabase.co https://api.weatherapi.com https://pt.libretranslate.com https://*.upstash.io https://o4507902068293632.ingest.us.sentry.io https://vitals.vercel-insights.com https://vercel.live https://vercel-insights.com https://translate.googleapis.com https://va.vercel-scripts.com https://fonts.googleapis.com https://fonts.gstatic.com https://res.cloudinary.com",
       "frame-src 'self'",
       "object-src 'none'",
       "base-uri 'self'",

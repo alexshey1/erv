@@ -2,6 +2,7 @@
   "name": "ErvApp - Sistema de Cultivo Inteligente",
   "short_name": "ErvApp",
   "description": "Sistema completo para monitoramento e gestão de cultivo com inteligência artificial",
+  "id": "/",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -11,6 +12,7 @@
   "lang": "pt-BR",
   "dir": "ltr",
   "categories": ["agriculture", "productivity", "utilities"],
+  "iarc_rating_id": "",
   "screenshots": [
     {
       "src": "/PRINT1.png",
@@ -52,13 +54,25 @@
       "src": "/cannabis11414267.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/cannabis11414267.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/cannabis11414267.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/cannabis11414267.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/ervapplog2o.png",
